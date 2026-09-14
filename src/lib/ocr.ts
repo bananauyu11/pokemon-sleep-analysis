@@ -55,28 +55,41 @@ function levenshtein(a: string, b: string): number {
   return dp[a.length][b.length];
 }
 
+// サブスキル名などの末尾についたランク文字(S/M/L)。曖昧一致の対象外にする
+// (「食材確率アップS」と「食材確率アップM」のように末尾1文字だけが違う名前は、
+// 通常の編集距離の許容範囲内に収まってしまい取り違える恐れがあるため)。
+const RANK_SUFFIX = /[SML]$/;
+
 /**
  * rawText 中に candidate に近い部分文字列が含まれるか(許容誤差つき)。
  * 誤検出を避けるため、候補文字列に対する編集距離の「比率」で判定する
  * (文字数に対して十分近い場合のみ一致とみなす。短い候補ほど厳しくする)。
+ * candidate の末尾がランク文字(S/M/L)の場合は、そこだけは完全一致を必須にする
+ * (例: 「食材確率アップS」と「食材確率アップM」を取り違えない)。
+ * 見つかった場合はその出現位置(nHay内のインデックス)を返す。見つからなければ -1。
  */
-function fuzzyIncludes(haystack: string, candidate: string): boolean {
+function fuzzyFindIndex(haystack: string, candidate: string): number {
   const nCandidate = normalize(candidate);
-  if (nCandidate.length < 2) return false;
+  if (nCandidate.length < 2) return -1;
   const nHay = normalize(haystack);
-  if (nHay.includes(nCandidate)) return true;
-  if (nCandidate.length < 4) return false; // 短い名前は誤検出しやすいので完全一致のみ許可
+  const exact = nHay.indexOf(nCandidate);
+  if (exact >= 0) return exact;
+  if (nCandidate.length < 4) return -1; // 短い名前は誤検出しやすいので完全一致のみ許可
+
+  const rankMatch = candidate.match(RANK_SUFFIX);
+  const requiredSuffix = rankMatch ? rankMatch[0].toLowerCase() : null;
 
   const windowSize = nCandidate.length;
   const maxRatio = 0.2; // 候補文字数の20%までの差異のみ許容
   const maxDist = Math.floor(nCandidate.length * maxRatio);
-  if (maxDist < 1) return false;
+  if (maxDist < 1) return -1;
 
   for (let i = 0; i <= nHay.length - windowSize; i++) {
     const slice = nHay.slice(i, i + windowSize);
-    if (levenshtein(slice, nCandidate) <= maxDist) return true;
+    if (requiredSuffix && slice[slice.length - 1] !== requiredSuffix) continue;
+    if (levenshtein(slice, nCandidate) <= maxDist) return i;
   }
-  return false;
+  return -1;
 }
 
 /**
@@ -108,9 +121,14 @@ export function extractFields(
     }
   }
 
-  const subSkillGuesses = subSkillNames.filter((name) =>
-    fuzzyIncludes(rawText, name)
-  );
+  // 画面上でサブスキルは解放レベル順(Lv10→25→50→70→80)に上から表示される
+  // ため、OCRテキスト中に「出現した順番」で並べ替えることで、そのままレベル
+  // 枠に割り当てられるようにする。
+  const subSkillGuesses = subSkillNames
+    .map((name) => ({ name, pos: fuzzyFindIndex(rawText, name) }))
+    .filter((m) => m.pos >= 0)
+    .sort((a, b) => a.pos - b.pos)
+    .map((m) => m.name);
 
   let mainSkillGuess = '';
   const lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);

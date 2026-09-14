@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { db } from '@/lib/db';
 import { extractFields, runOcr, type OcrExtraction } from '@/lib/ocr';
 import { useSpeciesList, useSubSkillNames } from '@/lib/hooks';
-import { createEmptyEntry, type PokemonEntry } from '@/lib/types';
+import { SUBSKILL_LEVELS, createEmptyEntry, type PokemonEntry } from '@/lib/types';
 import EntryForm from '@/components/EntryForm';
 
 type Status = 'idle' | 'processing' | 'done' | 'error';
@@ -53,6 +53,13 @@ export default function ImageImportSection() {
       entry.level = result.level ?? 1;
       entry.capturedTime = result.time;
       entry.imageFileName = file.name;
+      // 画面ではサブスキルが解放レベル順(Lv10→25→50→70→80)に上から
+      // 並んでいるため、OCRで出現順に検出できたサブスキル名をそのまま
+      // 前から順に各レベル枠へ割り当てる(誤検出の可能性があるため要確認)。
+      entry.subSkills = SUBSKILL_LEVELS.map((level, i) => ({
+        level,
+        skill: result.subSkillGuesses[i] ?? '',
+      }));
       setDraft(entry);
       setStatus('done');
     } catch (err) {
@@ -107,7 +114,7 @@ export default function ImageImportSection() {
           <p>推定時刻: {extraction.time || '(不明)'}</p>
           <p>推定メインスキル: {extraction.mainSkillGuess || '(不明)'}</p>
           <p>
-            サブスキル候補:{' '}
+            検出したサブスキル(上から順にLv10/25/50/70/80へ自動入力):{' '}
             {extraction.subSkillGuesses.length > 0
               ? extraction.subSkillGuesses.join(' / ')
               : '(検出なし・下のフォームで手動選択してください)'}
