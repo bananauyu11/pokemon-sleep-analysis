@@ -8,7 +8,6 @@ const LINKS = [
   { href: '/pokemon', label: '記録一覧' },
   { href: '/pokemon/new', label: '手動追加' },
   { href: '/import', label: '取込' },
-  { href: '/species', label: '種族マスタ' },
 ];
 
 export default function NavBar() {

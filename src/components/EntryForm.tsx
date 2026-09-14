@@ -118,13 +118,7 @@ export default function EntryForm({
           </datalist>
           {!matchedSpecies && entry.speciesName && (
             <p className="mt-1 text-xs text-amber-600">
-              種族マスタ未登録です。
-              <a
-                href={`/species?add=${encodeURIComponent(entry.speciesName)}`}
-                className="ml-1 underline"
-              >
-                マスタに追加する
-              </a>
+              種族マスタ未登録のため自動入力されません。タイプ・きのみ・メインスキル・食材は下記で手動入力してください。
             </p>
           )}
         </div>
