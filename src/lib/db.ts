@@ -27,20 +27,23 @@ export const db = new PokeSleepDB();
 
 let seeded = false;
 
-/** 初回起動時にマスタデータをシードする(既にデータがあれば何もしない) */
+/**
+ * 種族マスタ・サブスキル一覧はアプリ内に編集画面を持たず、コード
+ * (species-data.ts / subskills.ts)側で管理する運用のため、起動のたびに
+ * 常にコード内の最新内容で上書き同期する(ユーザーの記録データ=entriesは
+ * 対象外で、ここでは触らない)。
+ */
 export async function ensureSeeded(): Promise<void> {
   if (seeded) return;
   seeded = true;
 
-  const speciesCount = await db.species.count();
-  if (speciesCount === 0) {
+  await db.transaction('rw', db.species, db.subskillMaster, async () => {
+    await db.species.clear();
     await db.species.bulkAdd(DEFAULT_SPECIES);
-  }
 
-  const skillCount = await db.subskillMaster.count();
-  if (skillCount === 0) {
+    await db.subskillMaster.clear();
     await db.subskillMaster.bulkAdd(
       DEFAULT_SUBSKILLS.map((name) => ({ id: name, name }))
     );
-  }
+  });
 }
