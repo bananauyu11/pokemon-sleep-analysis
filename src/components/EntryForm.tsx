@@ -14,6 +14,7 @@ import {
 import { NATURES } from '@/lib/natures';
 import { computeIngredientPattern } from '@/lib/ingredient-pattern';
 import { useIngredientSuggestions, useSpeciesList, useSubSkillNames } from '@/lib/hooks';
+import { ingredientCandidatesForSlot } from '@/lib/species-data';
 import type { IconCropResult } from '@/lib/icon-match';
 import IngredientIconPicker from './IngredientIconPicker';
 
@@ -54,9 +55,11 @@ export default function EntryForm({
 
   // スロットごとの入力候補: 選択中のポケモン(種族マスタ)で判明している
   // 候補を優先的に表示し、それ以外の候補(他のポケモンで使われている食材名)も
-  // 補足として続ける。
+  // 補足として続ける。食材の抽選は手前のスロットの候補も引き継ぐため
+  // (例: 3番目のスロットには1・2番目の食材も出ることがある)、
+  // 候補はスロット0〜iの和集合で計算する。
   function slotIngredientSuggestions(i: 0 | 1 | 2): string[] {
-    const known = matchedSpecies?.ingredientOptions[i] ?? [];
+    const known = ingredientCandidatesForSlot(matchedSpecies, i);
     const rest = ingredientSuggestions.filter((s) => !known.includes(s));
     return [...known, ...rest];
   }
@@ -286,7 +289,7 @@ export default function EntryForm({
         </h3>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {([0, 1, 2] as const).map((i) => {
-            const known = matchedSpecies?.ingredientOptions[i] ?? [];
+            const known = ingredientCandidatesForSlot(matchedSpecies, i);
             const crop = ingredientCrops?.[i];
             return (
               <div key={i}>

@@ -5,6 +5,7 @@ import { db } from '@/lib/db';
 import { extractFields, findLabelLineBbox, runOcr, type OcrExtraction } from '@/lib/ocr';
 import { estimateIngredientSlots, matchIngredientIcon, type IconCropResult } from '@/lib/icon-match';
 import { useSpeciesList, useSubSkillNames } from '@/lib/hooks';
+import { ingredientCandidatesForSlot } from '@/lib/species-data';
 import { SUBSKILL_LEVELS, createEmptyEntry, type PokemonEntry } from '@/lib/types';
 import EntryForm from '@/components/EntryForm';
 
@@ -52,7 +53,9 @@ export default function ImageImportSection() {
       // 領域を切り出し、見た目が一番近いアイコンで自動入力する。
       // 種族マスタでそのスロットの候補が判明している場合は、比較対象を
       // その候補だけに絞り込むことで誤判定を減らす(候補不明の場合は
-      // 従来通り19種類全体から探す)。
+      // 従来通り19種類全体から探す)。食材の抽選は手前のスロットの候補も
+      // 引き継ぐため(例: 3番目のスロットには1・2番目の食材も出ることが
+      // ある)、候補はスロット0〜iの和集合で絞り込む。
       // 自動判定の精度は完全ではないため、切り出し画像とアイコン一覧を
       // 表示し、いつでもワンクリックで選び直せるようにしてある。
       let crops: (IconCropResult | null)[] | null = null;
@@ -69,7 +72,7 @@ export default function ImageImportSection() {
                 slot.y,
                 slot.w,
                 slot.h,
-                matched?.ingredientOptions[i]
+                ingredientCandidatesForSlot(matched, i as 0 | 1 | 2)
               )
             )
           );

@@ -42,7 +42,11 @@ export interface PokemonSpecies {
   specialty: SpecialtyType;
   berry: string; // きのみ名
   mainSkill: string; // メインスキル名
-  // 各食材スロット(1,2,3)の候補食材名。判明していないものは空配列でよい。
+  // 各食材スロット(1,2,3)で新たに判明している候補食材名。判明していない
+  // ものは空配列でよい。実際にそのスロットで起こり得る候補は、これに
+  // 加えて手前のスロットの候補も含む(2番目のスロットには1番目の食材も、
+  // 3番目のスロットには1・2番目の食材も出ることがある)。絞り込みに使う
+  // 際は `ingredientCandidatesForSlot`(species-data.ts)経由で参照すること。
   ingredientOptions: [string[], string[], string[]];
 }
 

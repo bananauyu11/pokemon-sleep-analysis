@@ -1,5 +1,32 @@
 import type { PokemonSpecies } from './types';
 
+/**
+ * 指定したスロット(0=1個目, 1=2個目, 2=3個目)であり得る食材候補を返す。
+ *
+ * 食材の抽選は「そのスロットの候補」だけでなく、より手前のスロットの
+ * 候補も含めて起こり得る(例: 2番目のスロットには1番目のスロットの
+ * 食材が出ることもあり、3番目のスロットには1・2番目の食材がどちらも
+ * 出ることもある)。そのため候補は ingredientOptions[0] から
+ * ingredientOptions[slotIndex] までの和集合(重複除去)として計算する。
+ */
+export function ingredientCandidatesForSlot(
+  species: Pick<PokemonSpecies, 'ingredientOptions'> | undefined,
+  slotIndex: 0 | 1 | 2
+): string[] {
+  if (!species) return [];
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (let i = 0; i <= slotIndex; i++) {
+    for (const name of species.ingredientOptions[i]) {
+      if (!seen.has(name)) {
+        seen.add(name);
+        result.push(name);
+      }
+    }
+  }
+  return result;
+}
+
 function species(
   id: string,
   specialty: PokemonSpecies['specialty'],
