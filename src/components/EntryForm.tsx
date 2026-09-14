@@ -46,6 +46,15 @@ export default function EntryForm({
     [entry.ingredients]
   );
 
+  // スロットごとの入力候補: 選択中のポケモン(種族マスタ)で判明している
+  // 候補を優先的に表示し、それ以外の候補(他のポケモンで使われている食材名)も
+  // 補足として続ける。
+  function slotIngredientSuggestions(i: 0 | 1 | 2): string[] {
+    const known = matchedSpecies?.ingredientOptions[i] ?? [];
+    const rest = ingredientSuggestions.filter((s) => !known.includes(s));
+    return [...known, ...rest];
+  }
+
   function handleSpeciesChange(name: string) {
     const found = speciesList.find((s) => s.name === name);
     setEntry((prev) => ({
@@ -270,23 +279,29 @@ export default function EntryForm({
           {pattern && <span className="chip bg-brand-accent/20 text-brand-accent-dark">パターン: {pattern}</span>}
         </h3>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {[0, 1, 2].map((i) => (
-            <div key={i}>
-              <label className="field-label">食材{i + 1}</label>
-              <input
-                list="ingredient-names"
-                className="field-input"
-                value={entry.ingredients[i]}
-                onChange={(e) => updateIngredient(i as 0 | 1 | 2, e.target.value)}
-                placeholder="食材名"
-              />
-            </div>
-          ))}
-          <datalist id="ingredient-names">
-            {ingredientSuggestions.map((n) => (
-              <option key={n} value={n} />
-            ))}
-          </datalist>
+          {([0, 1, 2] as const).map((i) => {
+            const known = matchedSpecies?.ingredientOptions[i] ?? [];
+            return (
+              <div key={i}>
+                <label className="field-label">食材{i + 1}</label>
+                <input
+                  list={`ingredient-names-${i}`}
+                  className="field-input"
+                  value={entry.ingredients[i]}
+                  onChange={(e) => updateIngredient(i, e.target.value)}
+                  placeholder="食材名"
+                />
+                <datalist id={`ingredient-names-${i}`}>
+                  {slotIngredientSuggestions(i).map((n) => (
+                    <option key={n} value={n} />
+                  ))}
+                </datalist>
+                {known.length > 0 && (
+                  <p className="mt-1 text-[11px] text-black/40">候補: {known.join(' / ')}</p>
+                )}
+              </div>
+            );
+          })}
         </div>
         <p className="mt-1 text-xs text-black/40">
           同じ食材が3つ→AAA、2つ→AAB、すべて異なる→ABC を自動判定します。
