@@ -1,5 +1,8 @@
 // ポケモンスリープ分析アプリの型定義
 
+// 'all'(オール型)は2025年4月にダークライなどごく一部の特別なポケモン
+// 向けに追加された、きのみ/食材/スキルすべての強みを併せ持つとくい分野。
+// カビゴンなど大半のポケモンには該当しない点に注意。
 export type SpecialtyType = 'berry' | 'ingredient' | 'skill' | 'all';
 
 export const SPECIALTY_LABELS: Record<SpecialtyType, string> = {
@@ -20,7 +23,8 @@ export const MEDAL_LABELS: Record<MedalRank, string> = {
 
 export const MEDAL_ORDER: MedalRank[] = ['none', 'bronze', 'silver', 'gold'];
 
-// サブスキル解放レベル(ポケモンスリープ仕様: Lv10/25/50/70/80の5枠)
+// サブスキル解放レベル(ポケモンスリープ仕様: Lv10/25/50/70/80の5枠)。
+// 2026年6月25日 Ver.3.6.0アップデートでLv75→Lv70、Lv100→Lv80に変更された。
 export const SUBSKILL_LEVELS = [10, 25, 50, 70, 80] as const;
 export type SubSkillLevel = (typeof SUBSKILL_LEVELS)[number];
 
