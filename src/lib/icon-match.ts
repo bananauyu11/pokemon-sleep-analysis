@@ -63,12 +63,33 @@ function computeSignature(
   return sig;
 }
 
+// 19種類のアイコンはいずれも背景に淡いクリーム色の円形バッジを共通で
+// 持っており、この背景色が特徴量(平均色)の大部分を占めてしまうため、
+// 見た目の異なるアイコン同士(例: ジンジャーとハーブ)でも色の平均だけでは
+// 近い値になりやすい(実測で確認)。周囲15%をトリミングして中心の
+// イラスト部分の比重を高めることで、識別性をやや改善する。
+const SIGNATURE_MARGIN = 0.15;
+
+function trimMargin(
+  sx: number,
+  sy: number,
+  sw: number,
+  sh: number
+): [number, number, number, number] {
+  const mx = sw * SIGNATURE_MARGIN;
+  const my = sh * SIGNATURE_MARGIN;
+  return [sx + mx, sy + my, sw - mx * 2, sh - my * 2];
+}
+
 async function getReferenceSignatures(): Promise<ReferenceSignature[]> {
   if (!referenceSignaturesPromise) {
     referenceSignaturesPromise = Promise.all(
       INGREDIENT_ICONS.map(async (ing) => {
         const img = await loadImage(ingredientIconUrl(ing.id));
-        const signature = computeSignature(img, 0, 0, img.naturalWidth, img.naturalHeight);
+        const signature = computeSignature(
+          img,
+          ...trimMargin(0, 0, img.naturalWidth, img.naturalHeight)
+        );
         return { id: ing.id, name: ing.name, signature };
       })
     );
@@ -111,7 +132,7 @@ export async function matchIngredientIcon(
   candidateNames?: string[]
 ): Promise<IconCropResult> {
   const refs = await getReferenceSignatures();
-  const targetSig = computeSignature(source, sx, sy, sw, sh);
+  const targetSig = computeSignature(source, ...trimMargin(sx, sy, sw, sh));
 
   const pool =
     candidateNames && candidateNames.length > 0
@@ -142,10 +163,11 @@ export async function matchIngredientIcon(
 // 注意: 実データで検証したところ、この単純な色ヒストグラム比較だけでは
 // 「モーモーミルク」と「とくせんエッグ」のような淡い色合いの食材同士を
 // 確実に区別できないことが分かっている(背景の薄い黄色が結果を支配して
-// しまい、アイコン自体の色・形の違いが埋もれてしまう)。そのため
-// `best`/`candidates` は「参考程度の近さ」以上の意味を持たせず、
-// 自動入力には使わない。実際の食材名の選択は、切り出したプレビュー画像を
-// 見ながらユーザー自身がアイコン一覧から選ぶ前提とする。
+// しまい、アイコン自体の色・形の違いが埋もれてしまう)。SIGNATURE_MARGIN
+// によるトリミングである程度は緩和されるが、根本的な解消ではない。
+// そのため `best`/`candidates` はあくまで「参考程度の近さ」であり、
+// 間違っている前提で、切り出したプレビュー画像を見ながらユーザー自身が
+// アイコン一覧からいつでも選び直せるようにしておくこと。
 
 export interface IngredientSlotRect {
   x: number;

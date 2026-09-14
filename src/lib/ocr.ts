@@ -35,27 +35,31 @@ export interface OcrRun {
 }
 
 /**
- * OCR前処理: グレースケール化 + コントラスト強調。
+ * OCR前処理: グレースケール化 + ガンマ補正による暗部強調。
+ *
  * ロック中(未解放)のサブスキル名のような薄いグレー文字は、元画像のまま
- * だと認識に失敗しやすいため、事前にコントラストを強めて判読しやすくする。
- * 失敗した場合は元のファイルをそのまま使う(ベストエフォート)。
+ * だと認識に失敗しやすい。ただし、中心値(128)を基準にした単純な線形の
+ * コントラスト強調は、文字も背景もどちらも明るい(白背景に薄いグレー文字、
+ * のような)ケースでは両方が白側に張り付いてしまい、かえって差が縮む
+ * (実測で悪化を確認した)。そのため、明るい側をあまり動かさず暗い側を
+ * より暗く寄せるガンマ補正(v' = 255*(v/255)^gamma, gamma>1)を使う。
+ * 失敗した場合はnullを返す(呼び出し側は元画像のみで処理を続行する)。
  */
-async function preprocessForOcr(file: Blob): Promise<Blob | HTMLCanvasElement> {
+async function enhanceForOcr(file: Blob): Promise<HTMLCanvasElement | null> {
   try {
     const bitmap = await createImageBitmap(file);
     const canvas = document.createElement('canvas');
     canvas.width = bitmap.width;
     canvas.height = bitmap.height;
     const ctx = canvas.getContext('2d', { willReadFrequently: true });
-    if (!ctx) return file;
+    if (!ctx) return null;
     ctx.drawImage(bitmap, 0, 0);
     const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
-    const contrast = 1.6;
-    const intercept = 128 * (1 - contrast);
+    const gamma = 1.6;
     for (let i = 0; i < data.length; i += 4) {
       const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
-      const v = Math.min(255, Math.max(0, gray * contrast + intercept));
+      const v = 255 * Math.pow(gray / 255, gamma);
       data[i] = v;
       data[i + 1] = v;
       data[i + 2] = v;
@@ -63,8 +67,51 @@ async function preprocessForOcr(file: Blob): Promise<Blob | HTMLCanvasElement> {
     ctx.putImageData(imageData, 0, 0);
     return canvas;
   } catch {
-    return file;
+    return null;
   }
+}
+
+interface TesseractLikePage {
+  text?: string;
+  blocks?: Array<{
+    paragraphs?: Array<{
+      lines?: Array<{ text: string; bbox: OcrBbox }>;
+    }>;
+  }> | null;
+}
+
+function flattenLines(data: TesseractLikePage): OcrLine[] {
+  const lines: OcrLine[] = [];
+  for (const block of data.blocks ?? []) {
+    for (const para of block.paragraphs ?? []) {
+      for (const line of para.lines ?? []) {
+        if (line.text.trim()) lines.push({ text: line.text, bbox: line.bbox });
+      }
+    }
+  }
+  return lines;
+}
+
+/** ほぼ同じ位置・同じ文字列の行を1つにまとめる(複数パスの結果を統合する際の重複除去)。 */
+function dedupeLines(lines: OcrLine[]): OcrLine[] {
+  const result: OcrLine[] = [];
+  outer: for (const line of lines) {
+    const cx = (line.bbox.x0 + line.bbox.x1) / 2;
+    const cy = (line.bbox.y0 + line.bbox.y1) / 2;
+    for (const existing of result) {
+      const ecx = (existing.bbox.x0 + existing.bbox.x1) / 2;
+      const ecy = (existing.bbox.y0 + existing.bbox.y1) / 2;
+      if (
+        normalize(existing.text) === normalize(line.text) &&
+        Math.abs(cx - ecx) < 20 &&
+        Math.abs(cy - ecy) < 20
+      ) {
+        continue outer;
+      }
+    }
+    result.push(line);
+  }
+  return result;
 }
 
 /**
@@ -72,6 +119,12 @@ async function preprocessForOcr(file: Blob): Promise<Blob | HTMLCanvasElement> {
  * ポケモンスリープのサブスキル欄は2列グリッドで表示されるため、単純にテキストの
  * 出現順だけでは画面上の並び(レベル解放順)と一致しないことがある。位置情報を
  * 使って行→列の順に並べ替えるために取得する。
+ *
+ * 元画像とガンマ補正で暗部を強調した画像の2パスで認識し、結果を統合する。
+ * どちらか一方でしか読み取れない文字(例: 元画像では潰れて見える薄いグレー文字が
+ * 補正後は読めるようになる、逆に補正で潰れた文字は元画像側で読める、等)を
+ * 両方カバーできるようにするため。1パスだけにする場合に比べて処理時間は増えるが、
+ * 検出漏れ(元画像だけなら読めていたはずの文字が補正で読めなくなる劣化)を防げる。
  */
 export async function runOcr(
   file: Blob,
@@ -86,17 +139,18 @@ export async function runOcr(
     },
   });
   try {
-    const ocrInput = await preprocessForOcr(file);
-    const { data } = await worker.recognize(ocrInput, {}, { blocks: true });
-    const lines: OcrLine[] = [];
-    for (const block of data.blocks ?? []) {
-      for (const para of block.paragraphs ?? []) {
-        for (const line of para.lines ?? []) {
-          if (line.text.trim()) lines.push({ text: line.text, bbox: line.bbox });
-        }
-      }
+    const enhanced = await enhanceForOcr(file);
+    const inputs: (Blob | HTMLCanvasElement)[] = enhanced ? [file, enhanced] : [file];
+
+    const texts: string[] = [];
+    const allLines: OcrLine[] = [];
+    for (const input of inputs) {
+      const { data } = await worker.recognize(input, {}, { blocks: true });
+      texts.push(data.text ?? '');
+      allLines.push(...flattenLines(data));
     }
-    return { text: data.text ?? '', lines };
+
+    return { text: texts.join('\n'), lines: dedupeLines(allLines) };
   } finally {
     await worker.terminate();
   }
@@ -213,8 +267,10 @@ export function findLabelLineBbox(lines: OcrLine[], label: string): OcrBbox | nu
 const SUBSKILL_LEVEL_SET = new Set<number>(SUBSKILL_LEVELS);
 const LEVEL_BADGE_RE = /Lv\.?\s*(\d{1,3})/i;
 
-interface LevelBadge {
-  level: number;
+interface TaggedItem {
+  kind: 'name' | 'badge';
+  name?: string; // kind === 'name'
+  level?: number; // kind === 'badge'
   bbox: OcrBbox;
 }
 
@@ -229,7 +285,12 @@ interface LevelBadge {
  * (単純に検出順でLv10から詰めていく方式だと、欠けが発生した時に
  * ズレて誤ったレベルに割り当ててしまう問題があった)。
  *
- * バッジが見つからない名前(＝解放済みでロック表示のないサブスキル)は、
+ * 対応付けはまず「行(Y座標が近いもの)」でグループ化し、同じ行の中で
+ * バッジと名前をX座標が近い順にペアリングする(行だけで判定すると、
+ * 2列グリッドの同じ行にある「バッジの無い名前」が、本来は別の列の
+ * バッジに対応するはずのバッジを誤って横取りしてしまう問題があった)。
+ *
+ * バッジと対応付かなかった名前(＝解放済みでロック表示のないサブスキル)は、
  * ゲーム仕様上必ずLv10側から連続して解放されるため、まだ埋まっていない
  * レベルのうち小さい方から、画面上の並び順(上から下、同じ行は左から右)
  * に割り当てる。
@@ -241,13 +302,12 @@ function detectSubSkillsByLevel(
   lines: OcrLine[],
   subSkillNames: string[]
 ): Record<number, string> {
-  const nameLines: MatchedLine[] = [];
-  const badgeLines: LevelBadge[] = [];
+  const tagged: TaggedItem[] = [];
 
   for (const line of lines) {
     for (const name of subSkillNames) {
       if (fuzzyIncludes(line.text, name)) {
-        nameLines.push({ name, bbox: line.bbox });
+        tagged.push({ kind: 'name', name, bbox: line.bbox });
         break; // 1行につき1候補まで
       }
     }
@@ -255,38 +315,61 @@ function detectSubSkillsByLevel(
     if (badgeMatch) {
       const lvl = Number.parseInt(badgeMatch[1], 10);
       if (SUBSKILL_LEVEL_SET.has(lvl)) {
-        badgeLines.push({ level: lvl, bbox: line.bbox });
+        tagged.push({ kind: 'badge', level: lvl, bbox: line.bbox });
       }
     }
   }
 
   const result: Record<number, string> = {};
-  if (nameLines.length === 0) return result;
+  if (tagged.every((t) => t.kind !== 'name')) return result;
 
-  // 名前の行ごとに、同じ「行(横並び)」とみなせる範囲内で一番近いバッジを探す。
+  // Y座標でソートし、行の高さの0.9倍未満の差を同じ行とみなしてグループ化する
+  // (名前の行とバッジの行は必ずしも完全に同じY座標ではないため、名前同士の
+  // 判定(0.6倍)よりやや広めに許容する)。
+  const sorted = [...tagged].sort((a, b) => a.bbox.y0 - b.bbox.y0);
+  const rows: TaggedItem[][] = [];
+  for (const item of sorted) {
+    const h = Math.max(1, item.bbox.y1 - item.bbox.y0);
+    const currentRow = rows[rows.length - 1];
+    if (currentRow && Math.abs(item.bbox.y0 - currentRow[0].bbox.y0) < h * 0.9) {
+      currentRow.push(item);
+    } else {
+      rows.push([item]);
+    }
+  }
+
   const unmatchedNames: MatchedLine[] = [];
-  for (const n of nameLines) {
-    const lineHeight = Math.max(1, n.bbox.y1 - n.bbox.y0);
-    let best: LevelBadge | null = null;
-    let bestDist = Infinity;
-    for (const b of badgeLines) {
-      if (result[b.level] !== undefined) continue; // 既に対応付け済みのレベルは除外
-      const sameRow = Math.abs(b.bbox.y0 - n.bbox.y0) < lineHeight * 1.2;
-      if (!sameRow) continue;
-      const dist = Math.hypot(
-        (b.bbox.x0 + b.bbox.x1) / 2 - (n.bbox.x0 + n.bbox.x1) / 2,
-        b.bbox.y0 - n.bbox.y0
-      );
-      if (dist < bestDist) {
-        bestDist = dist;
-        best = b;
+  for (const row of rows) {
+    const names = row.filter((r) => r.kind === 'name');
+    const badges = row.filter((r) => r.kind === 'badge');
+    const claimed = new Set<number>();
+
+    // 行内の各バッジについて、まだ他のバッジに使われていない名前の中から
+    // X座標が一番近いものを対応付ける(同じ行に複数列があっても、
+    // バッジは自分の列の名前とだけペアになるようにする)。
+    for (const b of badges) {
+      if (result[b.level!] !== undefined) continue;
+      let bestIdx = -1;
+      let bestDist = Infinity;
+      names.forEach((n, i) => {
+        if (claimed.has(i)) return;
+        const dist = Math.abs(
+          (n.bbox.x0 + n.bbox.x1) / 2 - (b.bbox.x0 + b.bbox.x1) / 2
+        );
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestIdx = i;
+        }
+      });
+      if (bestIdx >= 0) {
+        result[b.level!] = names[bestIdx].name!;
+        claimed.add(bestIdx);
       }
     }
-    if (best) {
-      result[best.level] = n.name;
-    } else {
-      unmatchedNames.push(n);
-    }
+
+    names.forEach((n, i) => {
+      if (!claimed.has(i)) unmatchedNames.push({ name: n.name!, bbox: n.bbox });
+    });
   }
 
   // バッジと対応付かなかった名前(解放済み)は、まだ埋まっていないレベルの
