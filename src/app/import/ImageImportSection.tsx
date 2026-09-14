@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { db } from '@/lib/db';
 import { extractFields, runOcr, type OcrExtraction } from '@/lib/ocr';
 import { useSpeciesList, useSubSkillNames } from '@/lib/hooks';
-import { createEmptyEntry, type PokemonEntry } from '@/lib/types';
+import { SUBSKILL_LEVELS, createEmptyEntry, type PokemonEntry } from '@/lib/types';
 import EntryForm from '@/components/EntryForm';
 
 type Status = 'idle' | 'processing' | 'done' | 'error';
@@ -33,9 +33,9 @@ export default function ImageImportSection() {
     setPreview(URL.createObjectURL(file));
 
     try {
-      const text = await runOcr(file, setProgress);
+      const run = await runOcr(file, setProgress);
       const result = extractFields(
-        text,
+        run,
         speciesList.map((s) => s.name),
         subSkillNames
       );
@@ -55,12 +55,14 @@ export default function ImageImportSection() {
       entry.imageFileName = file.name;
       // 食材はスロットごとに複数候補からランダムに決まる(個体差がある)ため、
       // 種族マスタの値をそのまま自動入力はしない(候補としては入力補助に使う)。
-      // サブスキルも自動入力はしない: 画面ではまだ解放されていない
-      // (ロック中の)枠も名前がグレー表示されるだけで文字自体は見えており、
-      // OCRはロック中かどうかを区別できないため、検出した名前をそのまま
-      // レベル枠に割り当てると未解放のスキルを取得済み扱いにしてしまう。
-      // そのため検出結果は下の候補一覧として表示するのみとし、
-      // どの枠がどのスキルかは画像を見ながら手動で選択してもらう。
+      // サブスキルは、各行の位置情報(バウンディングボックス)を使って
+      // 画面上の並び(上の行→下の行、同じ行は左→右)の順に推定しているため、
+      // ロック中(未解放)の枠を含めてそのままLv10/25/50/70/80へ割り当てる。
+      // 内容は必ず画像と見比べて確認・修正すること。
+      entry.subSkills = SUBSKILL_LEVELS.map((level, i) => ({
+        level,
+        skill: result.subSkillGuesses[i] ?? '',
+      }));
       setDraft(entry);
       setStatus('done');
     } catch (err) {
@@ -117,11 +119,11 @@ export default function ImageImportSection() {
           <p>推定時刻: {extraction.time || '(不明)'}</p>
           <p>推定メインスキル: {extraction.mainSkillGuess || '(不明)'}</p>
           <p>
-            画面内で検出したサブスキル名の候補(ロック中の未解放スキルも含まれます。
-            どのレベル枠のものかは画像を見て下のフォームで選択してください):{' '}
+            検出したサブスキル(画面上の位置から推定し、ロック中の未解放スキルも含めて
+            上から順にLv10/25/50/70/80へ自動入力):{' '}
             {extraction.subSkillGuesses.length > 0
               ? extraction.subSkillGuesses.join(' / ')
-              : '(検出なし)'}
+              : '(検出なし・下のフォームで手動選択してください)'}
           </p>
           <p className="mt-2 text-black/40">
             きのみ・食材・時刻・スキル名はアイコンや装飾フォントのため認識精度が低いことがあります。

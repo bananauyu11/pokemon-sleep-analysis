@@ -9,23 +9,59 @@ export interface OcrExtraction {
   time: string; // HH:mm 形式(見つからなければ空)
   level: number | null;
   speciesGuess: string; // マスタ内で一番近そうな名前
-  subSkillGuesses: string[]; // マスタ内サブスキルとの一致候補
+  subSkillGuesses: string[]; // 画面上の並び順(上の行→下の行、同じ行は左→右)に推定したサブスキル名。ロック中(未解放)のものも含む
   mainSkillGuess: string; // 「メインスキル」ラベル直後のテキスト(推測)
 }
 
+interface OcrBbox {
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+}
+
+interface OcrLine {
+  text: string;
+  bbox: OcrBbox;
+}
+
+export interface OcrRun {
+  text: string;
+  lines: OcrLine[];
+}
+
+/**
+ * 画像をOCRし、全文テキストに加えて行ごとの位置情報(バウンディングボックス)も取得する。
+ * ポケモンスリープのサブスキル欄は2列グリッドで表示されるため、単純にテキストの
+ * 出現順だけでは画面上の並び(レベル解放順)と一致しないことがある。位置情報を
+ * 使って行→列の順に並べ替えるために取得する。
+ */
 export async function runOcr(
   file: Blob,
   onProgress?: (progress: number) => void
-): Promise<string> {
+): Promise<OcrRun> {
   const Tesseract = await import('tesseract.js');
-  const { data } = await Tesseract.recognize(file, 'jpn', {
+  const worker = await Tesseract.createWorker('jpn', 1, {
     logger: (m: { status: string; progress: number }) => {
       if (m.status === 'recognizing text' && onProgress) {
         onProgress(m.progress);
       }
     },
   });
-  return data.text ?? '';
+  try {
+    const { data } = await worker.recognize(file, {}, { blocks: true });
+    const lines: OcrLine[] = [];
+    for (const block of data.blocks ?? []) {
+      for (const para of block.paragraphs ?? []) {
+        for (const line of para.lines ?? []) {
+          if (line.text.trim()) lines.push({ text: line.text, bbox: line.bbox });
+        }
+      }
+    }
+    return { text: data.text ?? '', lines };
+  } finally {
+    await worker.terminate();
+  }
 }
 
 function normalize(s: string): string {
@@ -61,20 +97,18 @@ function levenshtein(a: string, b: string): number {
 const RANK_SUFFIX = /[SML]$/;
 
 /**
- * rawText 中に candidate に近い部分文字列が含まれるか(許容誤差つき)。
+ * haystack 中に candidate に近い部分文字列が含まれるか(許容誤差つき)。
  * 誤検出を避けるため、候補文字列に対する編集距離の「比率」で判定する
  * (文字数に対して十分近い場合のみ一致とみなす。短い候補ほど厳しくする)。
  * candidate の末尾がランク文字(S/M/L)の場合は、そこだけは完全一致を必須にする
  * (例: 「食材確率アップS」と「食材確率アップM」を取り違えない)。
- * 見つかった場合はその出現位置(nHay内のインデックス)を返す。見つからなければ -1。
  */
-function fuzzyFindIndex(haystack: string, candidate: string): number {
+function fuzzyIncludes(haystack: string, candidate: string): boolean {
   const nCandidate = normalize(candidate);
-  if (nCandidate.length < 2) return -1;
+  if (nCandidate.length < 2) return false;
   const nHay = normalize(haystack);
-  const exact = nHay.indexOf(nCandidate);
-  if (exact >= 0) return exact;
-  if (nCandidate.length < 4) return -1; // 短い名前は誤検出しやすいので完全一致のみ許可
+  if (nHay.includes(nCandidate)) return true;
+  if (nCandidate.length < 4) return false; // 短い名前は誤検出しやすいので完全一致のみ許可
 
   const rankMatch = candidate.match(RANK_SUFFIX);
   const requiredSuffix = rankMatch ? rankMatch[0].toLowerCase() : null;
@@ -82,14 +116,14 @@ function fuzzyFindIndex(haystack: string, candidate: string): number {
   const windowSize = nCandidate.length;
   const maxRatio = 0.2; // 候補文字数の20%までの差異のみ許容
   const maxDist = Math.floor(nCandidate.length * maxRatio);
-  if (maxDist < 1) return -1;
+  if (maxDist < 1) return false;
 
   for (let i = 0; i <= nHay.length - windowSize; i++) {
     const slice = nHay.slice(i, i + windowSize);
     if (requiredSuffix && slice[slice.length - 1] !== requiredSuffix) continue;
-    if (levenshtein(slice, nCandidate) <= maxDist) return i;
+    if (levenshtein(slice, nCandidate) <= maxDist) return true;
   }
-  return -1;
+  return false;
 }
 
 /**
@@ -103,11 +137,40 @@ function exactIncludes(haystack: string, candidate: string): boolean {
   return normalize(haystack).includes(nCandidate);
 }
 
+interface MatchedLine {
+  name: string;
+  bbox: OcrBbox;
+}
+
+/**
+ * 位置情報つきの行から、同じ「行(横並び)」とみなせるものをグループ化する。
+ * ポケモンスリープのサブスキル欄は2列グリッドのため、Y座標がほぼ同じ
+ * (行の高さの半分未満の差)ものは同じ行、そうでなければ別の行として扱う。
+ * 各行の中はX座標(左→右)で並べる。
+ */
+function sortByGridPosition(matches: MatchedLine[]): string[] {
+  if (matches.length === 0) return [];
+  const sorted = [...matches].sort((a, b) => a.bbox.y0 - b.bbox.y0);
+  const rows: MatchedLine[][] = [];
+  for (const m of sorted) {
+    const lineHeight = Math.max(1, m.bbox.y1 - m.bbox.y0);
+    const currentRow = rows[rows.length - 1];
+    if (currentRow && Math.abs(m.bbox.y0 - currentRow[0].bbox.y0) < lineHeight * 0.6) {
+      currentRow.push(m);
+    } else {
+      rows.push([m]);
+    }
+  }
+  return rows.flatMap((row) => row.sort((a, b) => a.bbox.x0 - b.bbox.x0).map((m) => m.name));
+}
+
 export function extractFields(
-  rawText: string,
+  run: OcrRun,
   speciesNames: string[],
   subSkillNames: string[]
 ): OcrExtraction {
+  const rawText = run.text;
+
   const timeMatch = rawText.match(/([01]?\d|2[0-3])[:：]([0-5]\d)/);
   const time = timeMatch ? `${timeMatch[1].padStart(2, '0')}:${timeMatch[2]}` : '';
 
@@ -121,14 +184,19 @@ export function extractFields(
     }
   }
 
-  // 画面上でサブスキルは解放レベル順(Lv10→25→50→70→80)に上から表示される
-  // ため、OCRテキスト中に「出現した順番」で並べ替えることで、そのままレベル
-  // 枠に割り当てられるようにする。
-  const subSkillGuesses = subSkillNames
-    .map((name) => ({ name, pos: fuzzyFindIndex(rawText, name) }))
-    .filter((m) => m.pos >= 0)
-    .sort((a, b) => a.pos - b.pos)
-    .map((m) => m.name);
+  // 各行(位置情報つき)に対してサブスキル名が含まれるか調べ、見つかった
+  // ものを画面上の位置(上の行→下の行、同じ行なら左→右)の順に並べる。
+  // ロック中(未解放)の枠も名前は表示されているため、そのまま候補に含む。
+  const matchedLines: MatchedLine[] = [];
+  for (const line of run.lines) {
+    for (const name of subSkillNames) {
+      if (fuzzyIncludes(line.text, name)) {
+        matchedLines.push({ name, bbox: line.bbox });
+        break; // 1行につき1候補まで(同じ行に2つの候補名が誤って一致するのを防ぐ)
+      }
+    }
+  }
+  const subSkillGuesses = sortByGridPosition(matchedLines);
 
   let mainSkillGuess = '';
   const lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
