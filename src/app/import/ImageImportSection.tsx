@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { db } from '@/lib/db';
-import { extractFields, runOcr, type OcrExtraction } from '@/lib/ocr';
+import { extractFields, findLabelLineBbox, runOcr, type OcrExtraction } from '@/lib/ocr';
+import { estimateIngredientSlots, matchIngredientIcon, type IconCropResult } from '@/lib/icon-match';
 import { useSpeciesList, useSubSkillNames } from '@/lib/hooks';
 import { SUBSKILL_LEVELS, createEmptyEntry, type PokemonEntry } from '@/lib/types';
 import EntryForm from '@/components/EntryForm';
@@ -24,12 +25,16 @@ export default function ImageImportSection() {
   const [extraction, setExtraction] = useState<OcrExtraction | null>(null);
   const [draft, setDraft] = useState<PokemonEntry | null>(null);
   const [preview, setPreview] = useState<string>('');
+  const [ingredientCrops, setIngredientCrops] = useState<(IconCropResult | null)[] | null>(
+    null
+  );
 
   async function handleFile(file: File) {
     setStatus('processing');
     setProgress(0);
     setExtraction(null);
     setDraft(null);
+    setIngredientCrops(null);
     setPreview(URL.createObjectURL(file));
 
     try {
@@ -40,6 +45,24 @@ export default function ImageImportSection() {
         subSkillNames
       );
       setExtraction(result);
+
+      // 「食材」ラベルの位置を手がかりに、3つの食材アイコンのおおよその
+      // 領域を切り出して見た目で照合する(ベストエフォート・参考程度)。
+      const foodLabelBbox = findLabelLineBbox(run.lines, '食材');
+      if (foodLabelBbox) {
+        try {
+          const bitmap = await createImageBitmap(file);
+          const slots = estimateIngredientSlots(foodLabelBbox, bitmap.width);
+          const crops = await Promise.all(
+            slots.map((slot) =>
+              matchIngredientIcon(bitmap, slot.x, slot.y, slot.w, slot.h)
+            )
+          );
+          setIngredientCrops(crops);
+        } catch (cropErr) {
+          console.error('ingredient icon crop failed', cropErr);
+        }
+      }
 
       const matched = speciesList.find((s) => s.name === result.speciesGuess);
       const entry = createEmptyEntry();
@@ -78,7 +101,9 @@ export default function ImageImportSection() {
         ゲーム画面のスクリーンショットから時刻・名前・レベル・メインスキルなどを自動抽出します。
         文字認識は完全ではないため、必ず内容を確認してから登録してください。
         タイプ・きのみ・メインスキルは、名前が正しく認識できれば種族マスタから自動入力されます。
-        食材は同じポケモンでも個体ごとにスロットごとの候補からランダムで決まるため自動入力されません。画面を見ながら手動で選択してください。
+        食材は個体ごとにスロットごとの候補からランダムで決まるため自動入力はしませんが、
+        「食材」欄の位置からアイコン画像を切り出して表示するので、切り出し画像を見ながら
+        アイコン一覧(19種類)からクリックで選べます(自動判定は精度が低いため参考程度です)。
       </p>
       <input
         type="file"
@@ -149,10 +174,12 @@ export default function ImageImportSection() {
             key={draft.id}
             initial={draft}
             saveLabel="この内容で登録する"
+            ingredientCrops={ingredientCrops ?? undefined}
             onSave={async (entry) => {
               await db.entries.add(entry);
               setDraft(null);
               setExtraction(null);
+              setIngredientCrops(null);
               setPreview('');
               setStatus('idle');
             }}

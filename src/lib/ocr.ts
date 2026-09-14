@@ -13,14 +13,14 @@ export interface OcrExtraction {
   mainSkillGuess: string; // 「メインスキル」ラベル直後のテキスト(推測)
 }
 
-interface OcrBbox {
+export interface OcrBbox {
   x0: number;
   y0: number;
   x1: number;
   y1: number;
 }
 
-interface OcrLine {
+export interface OcrLine {
   text: string;
   bbox: OcrBbox;
 }
@@ -162,6 +162,14 @@ function sortByGridPosition(matches: MatchedLine[]): string[] {
     }
   }
   return rows.flatMap((row) => row.sort((a, b) => a.bbox.x0 - b.bbox.x0).map((m) => m.name));
+}
+
+/** 指定した文字列を含む行のバウンディングボックスを返す(見つからなければnull)。 */
+export function findLabelLineBbox(lines: OcrLine[], label: string): OcrBbox | null {
+  for (const line of lines) {
+    if (line.text.replace(/\s+/g, '').includes(label)) return line.bbox;
+  }
+  return null;
 }
 
 export function extractFields(

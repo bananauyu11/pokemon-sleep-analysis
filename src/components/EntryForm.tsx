@@ -14,12 +14,16 @@ import {
 import { NATURES } from '@/lib/natures';
 import { computeIngredientPattern } from '@/lib/ingredient-pattern';
 import { useIngredientSuggestions, useSpeciesList, useSubSkillNames } from '@/lib/hooks';
+import type { IconCropResult } from '@/lib/icon-match';
+import IngredientIconPicker from './IngredientIconPicker';
 
 interface EntryFormProps {
   initial: PokemonEntry;
   onSave: (entry: PokemonEntry) => Promise<void> | void;
   onDelete?: () => Promise<void> | void;
   saveLabel?: string;
+  /** 画像取込から渡される、食材スロットごとの切り出し画像(あれば表示) */
+  ingredientCrops?: (IconCropResult | null)[];
 }
 
 export default function EntryForm({
@@ -27,6 +31,7 @@ export default function EntryForm({
   onSave,
   onDelete,
   saveLabel = '保存する',
+  ingredientCrops,
 }: EntryFormProps) {
   const router = useRouter();
   const speciesList = useSpeciesList();
@@ -35,6 +40,7 @@ export default function EntryForm({
 
   const [entry, setEntry] = useState<PokemonEntry>(initial);
   const [saving, setSaving] = useState(false);
+  const [openPickerSlot, setOpenPickerSlot] = useState<number | null>(null);
 
   const matchedSpecies = useMemo(
     () => speciesList.find((s) => s.name === entry.speciesName),
@@ -281,9 +287,43 @@ export default function EntryForm({
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {([0, 1, 2] as const).map((i) => {
             const known = matchedSpecies?.ingredientOptions[i] ?? [];
+            const crop = ingredientCrops?.[i];
             return (
               <div key={i}>
                 <label className="field-label">食材{i + 1}</label>
+                {crop && (
+                  <div className="mb-1 flex items-center gap-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element -- small cropped preview from canvas dataURL */}
+                    <img
+                      src={crop.previewUrl}
+                      alt={`食材${i + 1}の切り出し画像`}
+                      className="h-14 w-14 rounded-lg border border-black/10 object-cover"
+                    />
+                    <button
+                      type="button"
+                      className="btn-ghost px-2 py-1 text-xs"
+                      onClick={() =>
+                        setOpenPickerSlot((prev) => (prev === i ? null : i))
+                      }
+                    >
+                      {openPickerSlot === i ? '閉じる' : 'アイコンから選ぶ'}
+                    </button>
+                  </div>
+                )}
+                {crop && openPickerSlot === i && (
+                  <div className="mb-2">
+                    <IngredientIconPicker
+                      hintName={crop.best?.name}
+                      onSelect={(name) => {
+                        updateIngredient(i, name);
+                        setOpenPickerSlot(null);
+                      }}
+                    />
+                    <p className="mt-1 text-[11px] text-black/40">
+                      自動判定は精度が低いため参考程度です。上の切り出し画像を見て、実際のアイコンと同じものを選んでください。
+                    </p>
+                  </div>
+                )}
                 <input
                   list={`ingredient-names-${i}`}
                   className="field-input"
