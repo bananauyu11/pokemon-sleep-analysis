@@ -94,20 +94,32 @@ export interface IconCropResult {
 }
 
 /**
- * 画像上の指定領域(sx, sy, sw, sh)を切り出し、19種類の食材アイコンと
- * 照合する。
+ * 画像上の指定領域(sx, sy, sw, sh)を切り出し、食材アイコンと照合する。
+ *
+ * `candidateNames` を指定すると、そのポケモンの種族マスタで判明している
+ * (そのスロットで実際にあり得る)食材名だけに絞り込んで比較する。
+ * 比較対象が少ないほど、淡い色同士の取り違えなどが起きにくくなるため、
+ * 判明している場合は優先的に使う。未指定、または該当する候補が
+ * 1件も無い場合は、従来通り19種類全体から探す。
  */
 export async function matchIngredientIcon(
   source: CanvasImageSource,
   sx: number,
   sy: number,
   sw: number,
-  sh: number
+  sh: number,
+  candidateNames?: string[]
 ): Promise<IconCropResult> {
   const refs = await getReferenceSignatures();
   const targetSig = computeSignature(source, sx, sy, sw, sh);
 
-  const candidates = refs
+  const pool =
+    candidateNames && candidateNames.length > 0
+      ? refs.filter((r) => candidateNames.includes(r.name))
+      : refs;
+  const searchRefs = pool.length > 0 ? pool : refs;
+
+  const candidates = searchRefs
     .map((r) => ({ id: r.id, name: r.name, distance: distance(targetSig, r.signature) }))
     .sort((a, b) => a.distance - b.distance);
 

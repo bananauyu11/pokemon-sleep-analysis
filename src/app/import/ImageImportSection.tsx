@@ -46,8 +46,13 @@ export default function ImageImportSection() {
       );
       setExtraction(result);
 
+      const matched = speciesList.find((s) => s.name === result.speciesGuess);
+
       // 「食材」ラベルの位置を手がかりに、3つの食材アイコンのおおよその
       // 領域を切り出し、見た目が一番近いアイコンで自動入力する。
+      // 種族マスタでそのスロットの候補が判明している場合は、比較対象を
+      // その候補だけに絞り込むことで誤判定を減らす(候補不明の場合は
+      // 従来通り19種類全体から探す)。
       // 自動判定の精度は完全ではないため、切り出し画像とアイコン一覧を
       // 表示し、いつでもワンクリックで選び直せるようにしてある。
       let crops: (IconCropResult | null)[] | null = null;
@@ -57,8 +62,15 @@ export default function ImageImportSection() {
           const bitmap = await createImageBitmap(file);
           const slots = estimateIngredientSlots(foodLabelBbox, bitmap.width);
           crops = await Promise.all(
-            slots.map((slot) =>
-              matchIngredientIcon(bitmap, slot.x, slot.y, slot.w, slot.h)
+            slots.map((slot, i) =>
+              matchIngredientIcon(
+                bitmap,
+                slot.x,
+                slot.y,
+                slot.w,
+                slot.h,
+                matched?.ingredientOptions[i]
+              )
             )
           );
           setIngredientCrops(crops);
@@ -67,7 +79,6 @@ export default function ImageImportSection() {
         }
       }
 
-      const matched = speciesList.find((s) => s.name === result.speciesGuess);
       const entry = createEmptyEntry();
       entry.id = crypto.randomUUID();
       entry.caughtDate = todayStr();
@@ -112,8 +123,9 @@ export default function ImageImportSection() {
         ゲーム画面のスクリーンショットから時刻・名前・レベル・メインスキルなどを自動抽出します。
         文字認識は完全ではないため、必ず内容を確認してから登録してください。
         タイプ・きのみ・メインスキルは、名前が正しく認識できれば種族マスタから自動入力されます。
-        食材は「食材」欄のアイコン画像を見た目で判定して仮入力しますが、判定精度は高くないため、
-        間違っていたら切り出し画像を見ながらアイコン一覧(19種類)からクリックで選び直してください。
+        食材は「食材」欄のアイコン画像を見た目で判定して仮入力します(種族マスタで候補が
+        判明しているポケモンは、その候補に絞り込んで判定します)。判定精度は高くないため、
+        間違っていたら切り出し画像を見ながらアイコン一覧からクリックで選び直してください。
       </p>
       <input
         type="file"

@@ -314,6 +314,7 @@ export default function EntryForm({
                   <div className="mb-2">
                     <IngredientIconPicker
                       hintName={crop.best?.name}
+                      candidateNames={known}
                       onSelect={(name) => {
                         updateIngredient(i, name);
                         setOpenPickerSlot(null);
