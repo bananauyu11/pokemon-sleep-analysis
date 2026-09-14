@@ -53,6 +53,15 @@ export default function ImageImportSection() {
       entry.level = result.level ?? 1;
       entry.capturedTime = result.time;
       entry.imageFileName = file.name;
+      // 食材はランダムではなく種族ごとに固定のため、種族が判別できれば
+      // アイコンを画像認識しなくても種族マスタから確定的に食材が分かる。
+      if (matched) {
+        entry.ingredients = [
+          matched.ingredientOptions[0][0] ?? '',
+          matched.ingredientOptions[1][0] ?? '',
+          matched.ingredientOptions[2][0] ?? '',
+        ];
+      }
       // 画面ではサブスキルが解放レベル順(Lv10→25→50→70→80)に上から
       // 並んでいるため、OCRで出現順に検出できたサブスキル名をそのまま
       // 前から順に各レベル枠へ割り当てる(誤検出の可能性があるため要確認)。
@@ -73,7 +82,8 @@ export default function ImageImportSection() {
       <h2 className="text-base font-bold text-brand-night-dark">画像取込(OCR)</h2>
       <p className="text-xs text-black/50">
         ゲーム画面のスクリーンショットから時刻・名前・レベル・メインスキルなどを自動抽出します。
-        文字認識は完全ではないため、必ず内容を確認してから登録してください。きのみ・食材の種類はOCRでは取得できないため手動で選択してください。
+        文字認識は完全ではないため、必ず内容を確認してから登録してください。
+        きのみ・食材・タイプ・メインスキルは、名前が正しく認識できればアイコンを見なくても種族マスタから自動入力されます(未収録のポケモンは手動で入力してください)。
       </p>
       <input
         type="file"
