@@ -72,13 +72,14 @@ function coerceMedal(v: string | undefined): MedalRank {
 }
 
 function coerceSpecialty(v: string | undefined): SpecialtyType {
-  const s = (v ?? '').trim();
+  const s = (v ?? '').trim().replace(/型$/, '');
   if ((SPECIALTY_VALUES as string[]).includes(s)) return s as SpecialtyType;
   const map: Record<string, SpecialtyType> = {
     きのみ: 'berry',
     食材: 'ingredient',
     スキル: 'skill',
     オール: 'all',
+    オールラウンド: 'all',
   };
   return map[s] ?? 'berry';
 }
@@ -163,6 +164,27 @@ export function speciesToCsv(list: PokemonSpecies[]): string {
   return Papa.unparse(rows);
 }
 
+// 列名のゆれを吸収するための別名一覧。
+// wikiの表をそのままコピー&ペーストして作ったCSV(日本語ヘッダー)でも
+// 取り込めるようにするため、英語キーと日本語表記の両方を許容する。
+const SPECIES_COLUMN_ALIASES: Record<string, string[]> = {
+  id: ['id', 'ID'],
+  name: ['name', '名前', 'ポケモン名', 'ポケモン'],
+  specialty: ['specialty', 'とくい', '得意', '得意なもの', 'タイプ'],
+  berry: ['berry', 'きのみ', '好物', '好物のきのみ', '好きなきのみ'],
+  mainSkill: ['mainSkill', 'メインスキル', 'スキル'],
+  ingredient1Options: ['ingredient1Options', '食材1', '食材①', '食材1(スロット1)'],
+  ingredient2Options: ['ingredient2Options', '食材2', '食材②', '食材2(スロット2)'],
+  ingredient3Options: ['ingredient3Options', '食材3', '食材③', '食材3(スロット3)'],
+};
+
+function pickColumn(row: Record<string, string>, key: keyof typeof SPECIES_COLUMN_ALIASES): string {
+  for (const alias of SPECIES_COLUMN_ALIASES[key]) {
+    if (row[alias] !== undefined && row[alias] !== '') return row[alias];
+  }
+  return '';
+}
+
 export function parseSpeciesCsv(csvText: string): {
   species: PokemonSpecies[];
   errors: string[];
@@ -173,18 +195,19 @@ export function parseSpeciesCsv(csvText: string): {
   });
   const errors = parsed.errors.map((e) => `行${(e.row ?? 0) + 2}: ${e.message}`);
   const species: PokemonSpecies[] = parsed.data
-    .filter((row) => row.name)
-    .map((row) => ({
-      id: row.id?.trim() || row.name.trim(),
-      name: row.name.trim(),
-      specialty: coerceSpecialty(row.specialty),
-      berry: (row.berry ?? '').trim(),
-      mainSkill: (row.mainSkill ?? '').trim(),
+    .map((row) => ({ row, name: pickColumn(row, 'name').trim() }))
+    .filter(({ name }) => name)
+    .map(({ row, name }) => ({
+      id: pickColumn(row, 'id').trim() || name,
+      name,
+      specialty: coerceSpecialty(pickColumn(row, 'specialty')),
+      berry: pickColumn(row, 'berry').trim(),
+      mainSkill: pickColumn(row, 'mainSkill').trim(),
       ingredientOptions: [
-        (row.ingredient1Options ?? '').split('/').filter(Boolean),
-        (row.ingredient2Options ?? '').split('/').filter(Boolean),
-        (row.ingredient3Options ?? '').split('/').filter(Boolean),
-      ],
+        pickColumn(row, 'ingredient1Options').split(/[\/、,]/).map((s) => s.trim()).filter(Boolean),
+        pickColumn(row, 'ingredient2Options').split(/[\/、,]/).map((s) => s.trim()).filter(Boolean),
+        pickColumn(row, 'ingredient3Options').split(/[\/、,]/).map((s) => s.trim()).filter(Boolean),
+      ] as [string[], string[], string[]],
     }));
   return { species, errors };
 }
