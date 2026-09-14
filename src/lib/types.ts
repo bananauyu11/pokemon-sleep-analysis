@@ -20,8 +20,8 @@ export const MEDAL_LABELS: Record<MedalRank, string> = {
 
 export const MEDAL_ORDER: MedalRank[] = ['none', 'bronze', 'silver', 'gold'];
 
-// サブスキル解放レベル(ポケモンスリープ仕様: Lv10/25/50/75/100の5枠)
-export const SUBSKILL_LEVELS = [10, 25, 50, 75, 100] as const;
+// サブスキル解放レベル(ポケモンスリープ仕様: Lv10/25/50/70/80の5枠)
+export const SUBSKILL_LEVELS = [10, 25, 50, 70, 80] as const;
 export type SubSkillLevel = (typeof SUBSKILL_LEVELS)[number];
 
 export interface SubSkillEntry {

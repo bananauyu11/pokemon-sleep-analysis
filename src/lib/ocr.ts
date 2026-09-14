@@ -55,22 +55,39 @@ function levenshtein(a: string, b: string): number {
   return dp[a.length][b.length];
 }
 
-/** rawText 中に candidate に近い部分文字列が含まれるか(許容誤差つき) */
+/**
+ * rawText 中に candidate に近い部分文字列が含まれるか(許容誤差つき)。
+ * 誤検出を避けるため、候補文字列に対する編集距離の「比率」で判定する
+ * (文字数に対して十分近い場合のみ一致とみなす。短い候補ほど厳しくする)。
+ */
 function fuzzyIncludes(haystack: string, candidate: string): boolean {
   const nCandidate = normalize(candidate);
-  if (!nCandidate) return false;
+  if (nCandidate.length < 2) return false;
   const nHay = normalize(haystack);
   if (nHay.includes(nCandidate)) return true;
-  if (nCandidate.length < 2) return false;
+  if (nCandidate.length < 4) return false; // 短い名前は誤検出しやすいので完全一致のみ許可
 
-  const tolerance = Math.max(1, Math.floor(nCandidate.length * 0.34));
   const windowSize = nCandidate.length;
-  for (let i = 0; i <= nHay.length - windowSize + tolerance; i++) {
-    const slice = nHay.slice(i, i + windowSize + tolerance);
-    if (slice.length < windowSize - tolerance) continue;
-    if (levenshtein(slice, nCandidate) <= tolerance) return true;
+  const maxRatio = 0.2; // 候補文字数の20%までの差異のみ許容
+  const maxDist = Math.floor(nCandidate.length * maxRatio);
+  if (maxDist < 1) return false;
+
+  for (let i = 0; i <= nHay.length - windowSize; i++) {
+    const slice = nHay.slice(i, i + windowSize);
+    if (levenshtein(slice, nCandidate) <= maxDist) return true;
   }
   return false;
+}
+
+/**
+ * 種族名は誤判定の影響が大きい(誤ったポケモンを登録してしまう)ため、
+ * 曖昧一致は使わず、正規化した完全一致(部分文字列一致)のみを採用する。
+ * 一致しない場合は無理に推測せず空文字を返す。
+ */
+function exactIncludes(haystack: string, candidate: string): boolean {
+  const nCandidate = normalize(candidate);
+  if (nCandidate.length < 2) return false;
+  return normalize(haystack).includes(nCandidate);
 }
 
 export function extractFields(
@@ -86,8 +103,8 @@ export function extractFields(
 
   let speciesGuess = '';
   for (const name of speciesNames) {
-    if (fuzzyIncludes(rawText, name)) {
-      if (name.length > speciesGuess.length) speciesGuess = name;
+    if (exactIncludes(rawText, name) && name.length > speciesGuess.length) {
+      speciesGuess = name;
     }
   }
 

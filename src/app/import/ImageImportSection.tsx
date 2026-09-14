@@ -112,6 +112,18 @@ export default function ImageImportSection() {
               ? extraction.subSkillGuesses.join(' / ')
               : '(検出なし・下のフォームで手動選択してください)'}
           </p>
+          <p className="mt-2 text-black/40">
+            きのみ・食材・時刻・スキル名はアイコンや装飾フォントのため認識精度が低いことがあります。
+            下の「OCRが読み取った全文」を見ながら、フォームを手動で修正してください。
+          </p>
+          <details className="mt-2">
+            <summary className="cursor-pointer text-brand-night-dark/70">
+              OCRが読み取った全文(デバッグ用)
+            </summary>
+            <pre className="mt-1 max-h-56 overflow-auto whitespace-pre-wrap rounded bg-white p-2 text-[11px] text-black/70">
+              {extraction.rawText || '(テキストを検出できませんでした)'}
+            </pre>
+          </details>
         </div>
       )}
 
