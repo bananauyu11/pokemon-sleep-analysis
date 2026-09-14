@@ -48,6 +48,7 @@ export default function EntryForm({
 
   function handleSpeciesChange(name: string) {
     const found = speciesList.find((s) => s.name === name);
+    const hasNoIngredients = entry.ingredients.every((i) => !i);
     setEntry((prev) => ({
       ...prev,
       speciesName: name,
@@ -55,6 +56,14 @@ export default function EntryForm({
       specialty: found?.specialty ?? prev.specialty,
       berry: found?.berry || prev.berry,
       mainSkill: prev.mainSkill || found?.mainSkill || '',
+      ingredients:
+        hasNoIngredients && found
+          ? ([
+              found.ingredientOptions[0][0] ?? '',
+              found.ingredientOptions[1][0] ?? '',
+              found.ingredientOptions[2][0] ?? '',
+            ] as [string, string, string])
+          : prev.ingredients,
     }));
   }
 

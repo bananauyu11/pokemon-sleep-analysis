@@ -6,6 +6,7 @@ import { db } from '@/lib/db';
 import { useSpeciesList, useSubSkillNames } from '@/lib/hooks';
 import { SPECIALTY_LABELS, type PokemonSpecies, type SpecialtyType } from '@/lib/types';
 import { parseSpeciesCsv, speciesToCsv } from '@/lib/csv';
+import { DEFAULT_SPECIES } from '@/lib/species-data';
 
 function slugify(name: string): string {
   return `sp-${name}-${Math.random().toString(36).slice(2, 7)}`;
@@ -85,13 +86,24 @@ export default function SpeciesClient() {
     }
   }
 
+  async function handleResetToDefaults() {
+    if (
+      confirm(
+        `アプリ内蔵の最新データ(${DEFAULT_SPECIES.length}種)を反映します。同じ名前の種族は上書きされます。手動で追加・編集した独自のポケモンはそのまま残ります。続けますか?`
+      )
+    ) {
+      await db.species.bulkPut(DEFAULT_SPECIES);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-lg font-bold text-brand-night-dark">種族マスタ管理</h1>
         <p className="mt-1 text-xs text-black/50">
-          ポケモンごとの「きのみ/食材/スキル」タイプは名前から自動入力するための参照データです。
-          初期データは参考値のため、実際のゲーム内容と異なる場合はここで修正してください。
+          ポケモンごとの「きのみ/食材/スキル」タイプ・きのみ・メインスキル・食材は、
+          ポケモンスリープ攻略・検証Wikiの情報をもとに登録しています(全247種)。
+          誤りやアップデートによる変更があればここで修正してください。
         </p>
       </div>
 
@@ -141,6 +153,9 @@ export default function SpeciesClient() {
             登録済み種族 ({sortedSpecies.length}件)
           </h2>
           <div className="flex gap-2">
+            <button className="btn-accent" onClick={handleResetToDefaults}>
+              最新データを反映
+            </button>
             <button className="btn-ghost" onClick={handleExportSpecies}>
               CSV出力
             </button>
