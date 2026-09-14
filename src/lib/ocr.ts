@@ -4,12 +4,16 @@
 // ゲーム内スクリーンショットは装飾されたUIのため認識精度は完全ではない。
 // 抽出結果は必ずフォームで確認・修正できるようにする前提の設計。
 
+import { SUBSKILL_LEVELS } from './types';
+
 export interface OcrExtraction {
   rawText: string;
   time: string; // HH:mm 形式(見つからなければ空)
   level: number | null;
   speciesGuess: string; // マスタ内で一番近そうな名前
-  subSkillGuesses: string[]; // 画面上の並び順(上の行→下の行、同じ行は左→右)に推定したサブスキル名。ロック中(未解放)のものも含む
+  // Lv(10/25/50/70/80) -> サブスキル名。そのレベルを判定できなかった場合は
+  // キー自体が存在しない(誤ったレベルに割り当てるより、空欄の方が安全なため)。
+  subSkillGuesses: Record<number, string>;
   mainSkillGuess: string; // 「メインスキル」ラベル直後のテキスト(推測)
 }
 
@@ -31,6 +35,39 @@ export interface OcrRun {
 }
 
 /**
+ * OCR前処理: グレースケール化 + コントラスト強調。
+ * ロック中(未解放)のサブスキル名のような薄いグレー文字は、元画像のまま
+ * だと認識に失敗しやすいため、事前にコントラストを強めて判読しやすくする。
+ * 失敗した場合は元のファイルをそのまま使う(ベストエフォート)。
+ */
+async function preprocessForOcr(file: Blob): Promise<Blob | HTMLCanvasElement> {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const canvas = document.createElement('canvas');
+    canvas.width = bitmap.width;
+    canvas.height = bitmap.height;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0);
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    const contrast = 1.6;
+    const intercept = 128 * (1 - contrast);
+    for (let i = 0; i < data.length; i += 4) {
+      const gray = data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114;
+      const v = Math.min(255, Math.max(0, gray * contrast + intercept));
+      data[i] = v;
+      data[i + 1] = v;
+      data[i + 2] = v;
+    }
+    ctx.putImageData(imageData, 0, 0);
+    return canvas;
+  } catch {
+    return file;
+  }
+}
+
+/**
  * 画像をOCRし、全文テキストに加えて行ごとの位置情報(バウンディングボックス)も取得する。
  * ポケモンスリープのサブスキル欄は2列グリッドで表示されるため、単純にテキストの
  * 出現順だけでは画面上の並び(レベル解放順)と一致しないことがある。位置情報を
@@ -49,7 +86,8 @@ export async function runOcr(
     },
   });
   try {
-    const { data } = await worker.recognize(file, {}, { blocks: true });
+    const ocrInput = await preprocessForOcr(file);
+    const { data } = await worker.recognize(ocrInput, {}, { blocks: true });
     const lines: OcrLine[] = [];
     for (const block of data.blocks ?? []) {
       for (const para of block.paragraphs ?? []) {
@@ -172,6 +210,96 @@ export function findLabelLineBbox(lines: OcrLine[], label: string): OcrBbox | nu
   return null;
 }
 
+const SUBSKILL_LEVEL_SET = new Set<number>(SUBSKILL_LEVELS);
+const LEVEL_BADGE_RE = /Lv\.?\s*(\d{1,3})/i;
+
+interface LevelBadge {
+  level: number;
+  bbox: OcrBbox;
+}
+
+/**
+ * サブスキル名とレベル(Lv10/25/50/70/80)の対応を推定する。
+ *
+ * ポケモンスリープのサブスキル欄は、ロック中(未解放)の枠には対象レベルが
+ * 「🔒Lv.25」のようにバッジ表示される。このバッジのレベル数値は直接的で
+ * 信頼できる情報なので、名前が読み取れた行の近くにバッジがあれば、その
+ * レベルにそのまま対応付ける。これにより、他の枠の文字が読み取れずに
+ * 欠けていても、読み取れた枠だけは正しいレベルに割り当てられる
+ * (単純に検出順でLv10から詰めていく方式だと、欠けが発生した時に
+ * ズレて誤ったレベルに割り当ててしまう問題があった)。
+ *
+ * バッジが見つからない名前(＝解放済みでロック表示のないサブスキル)は、
+ * ゲーム仕様上必ずLv10側から連続して解放されるため、まだ埋まっていない
+ * レベルのうち小さい方から、画面上の並び順(上から下、同じ行は左から右)
+ * に割り当てる。
+ *
+ * どちらの方法でも対応が付かなかったレベルは、結果にキーを含めない
+ * (誤ったレベルに割り当てるより空欄の方が安全なため)。
+ */
+function detectSubSkillsByLevel(
+  lines: OcrLine[],
+  subSkillNames: string[]
+): Record<number, string> {
+  const nameLines: MatchedLine[] = [];
+  const badgeLines: LevelBadge[] = [];
+
+  for (const line of lines) {
+    for (const name of subSkillNames) {
+      if (fuzzyIncludes(line.text, name)) {
+        nameLines.push({ name, bbox: line.bbox });
+        break; // 1行につき1候補まで
+      }
+    }
+    const badgeMatch = line.text.match(LEVEL_BADGE_RE);
+    if (badgeMatch) {
+      const lvl = Number.parseInt(badgeMatch[1], 10);
+      if (SUBSKILL_LEVEL_SET.has(lvl)) {
+        badgeLines.push({ level: lvl, bbox: line.bbox });
+      }
+    }
+  }
+
+  const result: Record<number, string> = {};
+  if (nameLines.length === 0) return result;
+
+  // 名前の行ごとに、同じ「行(横並び)」とみなせる範囲内で一番近いバッジを探す。
+  const unmatchedNames: MatchedLine[] = [];
+  for (const n of nameLines) {
+    const lineHeight = Math.max(1, n.bbox.y1 - n.bbox.y0);
+    let best: LevelBadge | null = null;
+    let bestDist = Infinity;
+    for (const b of badgeLines) {
+      if (result[b.level] !== undefined) continue; // 既に対応付け済みのレベルは除外
+      const sameRow = Math.abs(b.bbox.y0 - n.bbox.y0) < lineHeight * 1.2;
+      if (!sameRow) continue;
+      const dist = Math.hypot(
+        (b.bbox.x0 + b.bbox.x1) / 2 - (n.bbox.x0 + n.bbox.x1) / 2,
+        b.bbox.y0 - n.bbox.y0
+      );
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = b;
+      }
+    }
+    if (best) {
+      result[best.level] = n.name;
+    } else {
+      unmatchedNames.push(n);
+    }
+  }
+
+  // バッジと対応付かなかった名前(解放済み)は、まだ埋まっていないレベルの
+  // うち小さい方から、画面上の並び順に割り当てる。
+  const remainingLevels = SUBSKILL_LEVELS.filter((lv) => result[lv] === undefined);
+  const orderedUnmatched = sortByGridPosition(unmatchedNames);
+  for (let i = 0; i < orderedUnmatched.length && i < remainingLevels.length; i++) {
+    result[remainingLevels[i]] = orderedUnmatched[i];
+  }
+
+  return result;
+}
+
 export function extractFields(
   run: OcrRun,
   speciesNames: string[],
@@ -192,19 +320,10 @@ export function extractFields(
     }
   }
 
-  // 各行(位置情報つき)に対してサブスキル名が含まれるか調べ、見つかった
-  // ものを画面上の位置(上の行→下の行、同じ行なら左→右)の順に並べる。
-  // ロック中(未解放)の枠も名前は表示されているため、そのまま候補に含む。
-  const matchedLines: MatchedLine[] = [];
-  for (const line of run.lines) {
-    for (const name of subSkillNames) {
-      if (fuzzyIncludes(line.text, name)) {
-        matchedLines.push({ name, bbox: line.bbox });
-        break; // 1行につき1候補まで(同じ行に2つの候補名が誤って一致するのを防ぐ)
-      }
-    }
-  }
-  const subSkillGuesses = sortByGridPosition(matchedLines);
+  // ロック中(未解放)の枠に表示される「Lv.XX」バッジを手がかりに、
+  // 読み取れたサブスキル名を正しいレベルへ対応付ける(詳細は
+  // detectSubSkillsByLevel のコメントを参照)。
+  const subSkillGuesses = detectSubSkillsByLevel(run.lines, subSkillNames);
 
   let mainSkillGuess = '';
   const lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);

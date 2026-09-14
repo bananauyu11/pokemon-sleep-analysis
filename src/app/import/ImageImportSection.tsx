@@ -103,13 +103,13 @@ export default function ImageImportSection() {
           crops[2]?.best?.name ?? '',
         ];
       }
-      // サブスキルは、各行の位置情報(バウンディングボックス)を使って
-      // 画面上の並び(上の行→下の行、同じ行は左→右)の順に推定しているため、
-      // ロック中(未解放)の枠を含めてそのままLv10/25/50/70/80へ割り当てる。
+      // サブスキルは、ロック中(未解放)の枠に表示される「Lv.XX」バッジを
+      // 手がかりにレベルへ対応付け済み(result.subSkillGuesses は
+      // レベル→サブスキル名のマップ)。判定できなかったレベルは空欄になる。
       // 内容は必ず画像と見比べて確認・修正すること。
-      entry.subSkills = SUBSKILL_LEVELS.map((level, i) => ({
+      entry.subSkills = SUBSKILL_LEVELS.map((level) => ({
         level,
-        skill: result.subSkillGuesses[i] ?? '',
+        skill: result.subSkillGuesses[level] ?? '',
       }));
       setDraft(entry);
       setStatus('done');
@@ -169,10 +169,12 @@ export default function ImageImportSection() {
           <p>推定時刻: {extraction.time || '(不明)'}</p>
           <p>推定メインスキル: {extraction.mainSkillGuess || '(不明)'}</p>
           <p>
-            検出したサブスキル(画面上の位置から推定し、ロック中の未解放スキルも含めて
-            上から順にLv10/25/50/70/80へ自動入力):{' '}
-            {extraction.subSkillGuesses.length > 0
-              ? extraction.subSkillGuesses.join(' / ')
+            検出したサブスキル(ロック中の未解放スキルに表示されるLvバッジを手がかりに
+            レベルを判定。判定できなかったレベルは空欄):{' '}
+            {Object.keys(extraction.subSkillGuesses).length > 0
+              ? SUBSKILL_LEVELS.filter((lv) => extraction.subSkillGuesses[lv])
+                  .map((lv) => `Lv${lv}:${extraction.subSkillGuesses[lv]}`)
+                  .join(' / ')
               : '(検出なし・下のフォームで手動選択してください)'}
           </p>
           <p className="mt-2 text-black/40">
