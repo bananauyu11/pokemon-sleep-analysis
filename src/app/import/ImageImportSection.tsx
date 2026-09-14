@@ -59,7 +59,8 @@ export default function ImageImportSection() {
       // 自動判定の精度は完全ではないため、切り出し画像とアイコン一覧を
       // 表示し、いつでもワンクリックで選び直せるようにしてある。
       let crops: (IconCropResult | null)[] | null = null;
-      const foodLabelBbox = findLabelLineBbox(run.lines, '食材');
+      const foodLabelBbox =
+        findLabelLineBbox(run.lines, '食材') ?? findLabelLineBbox(run.paragraphs, '食材');
       if (foodLabelBbox) {
         try {
           const bitmap = await createImageBitmap(file);

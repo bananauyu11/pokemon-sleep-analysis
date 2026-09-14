@@ -32,6 +32,12 @@ export interface OcrLine {
 export interface OcrRun {
   text: string;
   lines: OcrLine[];
+  // 段落(Tesseractのparagraph)単位でまとめたテキスト。ゲームの装飾フォントは
+  // 文字間が広く、1つのサブスキル名が複数の「行」に分割して認識されてしまう
+  // ことがあり、その場合は行単位の一致判定だけでは名前全体を拾えない。
+  // 段落は複数の行をまとめたものなので、行が分割されていても名前全体が
+  // 含まれている可能性が高く、行での一致判定の補完(フォールバック)に使う。
+  paragraphs: OcrLine[];
 }
 
 /**
@@ -92,6 +98,26 @@ function flattenLines(data: TesseractLikePage): OcrLine[] {
   return lines;
 }
 
+/** 段落単位で、含まれる行のテキストを連結し、バウンディングボックスを結合する。 */
+function flattenParagraphs(data: TesseractLikePage): OcrLine[] {
+  const paragraphs: OcrLine[] = [];
+  for (const block of data.blocks ?? []) {
+    for (const para of block.paragraphs ?? []) {
+      const paraLines = (para.lines ?? []).filter((l) => l.text.trim());
+      if (paraLines.length === 0) continue;
+      const text = paraLines.map((l) => l.text).join('');
+      const bbox: OcrBbox = {
+        x0: Math.min(...paraLines.map((l) => l.bbox.x0)),
+        y0: Math.min(...paraLines.map((l) => l.bbox.y0)),
+        x1: Math.max(...paraLines.map((l) => l.bbox.x1)),
+        y1: Math.max(...paraLines.map((l) => l.bbox.y1)),
+      };
+      paragraphs.push({ text, bbox });
+    }
+  }
+  return paragraphs;
+}
+
 /** ほぼ同じ位置・同じ文字列の行を1つにまとめる(複数パスの結果を統合する際の重複除去)。 */
 function dedupeLines(lines: OcrLine[]): OcrLine[] {
   const result: OcrLine[] = [];
@@ -144,13 +170,19 @@ export async function runOcr(
 
     const texts: string[] = [];
     const allLines: OcrLine[] = [];
+    const allParagraphs: OcrLine[] = [];
     for (const input of inputs) {
       const { data } = await worker.recognize(input, {}, { blocks: true });
       texts.push(data.text ?? '');
       allLines.push(...flattenLines(data));
+      allParagraphs.push(...flattenParagraphs(data));
     }
 
-    return { text: texts.join('\n'), lines: dedupeLines(allLines) };
+    return {
+      text: texts.join('\n'),
+      lines: dedupeLines(allLines),
+      paragraphs: dedupeLines(allParagraphs),
+    };
   } finally {
     await worker.terminate();
   }
@@ -297,17 +329,26 @@ interface TaggedItem {
  *
  * どちらの方法でも対応が付かなかったレベルは、結果にキーを含めない
  * (誤ったレベルに割り当てるより空欄の方が安全なため)。
+ *
+ * 装飾フォントで文字間が広いと、1つのサブスキル名が複数の「行」に
+ * 分割して認識され、どの行の文字列にも名前全体が収まらず検出漏れに
+ * なることがある。その場合の救済として、行単位で見つからなかった名前は
+ * 段落(複数行をまとめたテキスト)単位でも探す(`paragraphs`)。
+ * 既に行単位で見つかっている名前には影響しない(追加のフォールバックのみ)。
  */
 function detectSubSkillsByLevel(
   lines: OcrLine[],
-  subSkillNames: string[]
+  subSkillNames: string[],
+  paragraphs: OcrLine[] = []
 ): Record<number, string> {
   const tagged: TaggedItem[] = [];
+  const foundNames = new Set<string>();
 
   for (const line of lines) {
     for (const name of subSkillNames) {
       if (fuzzyIncludes(line.text, name)) {
         tagged.push({ kind: 'name', name, bbox: line.bbox });
+        foundNames.add(name);
         break; // 1行につき1候補まで
       }
     }
@@ -316,6 +357,17 @@ function detectSubSkillsByLevel(
       const lvl = Number.parseInt(badgeMatch[1], 10);
       if (SUBSKILL_LEVEL_SET.has(lvl)) {
         tagged.push({ kind: 'badge', level: lvl, bbox: line.bbox });
+      }
+    }
+  }
+
+  for (const para of paragraphs) {
+    for (const name of subSkillNames) {
+      if (foundNames.has(name)) continue;
+      if (fuzzyIncludes(para.text, name)) {
+        tagged.push({ kind: 'name', name, bbox: para.bbox });
+        foundNames.add(name);
+        break; // 1段落につき1候補まで
       }
     }
   }
@@ -406,7 +458,7 @@ export function extractFields(
   // ロック中(未解放)の枠に表示される「Lv.XX」バッジを手がかりに、
   // 読み取れたサブスキル名を正しいレベルへ対応付ける(詳細は
   // detectSubSkillsByLevel のコメントを参照)。
-  const subSkillGuesses = detectSubSkillsByLevel(run.lines, subSkillNames);
+  const subSkillGuesses = detectSubSkillsByLevel(run.lines, subSkillNames, run.paragraphs);
 
   let mainSkillGuess = '';
   const lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
