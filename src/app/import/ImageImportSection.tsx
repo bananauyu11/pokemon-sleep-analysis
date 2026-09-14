@@ -47,13 +47,16 @@ export default function ImageImportSection() {
       setExtraction(result);
 
       // 「食材」ラベルの位置を手がかりに、3つの食材アイコンのおおよその
-      // 領域を切り出して見た目で照合する(ベストエフォート・参考程度)。
+      // 領域を切り出し、見た目が一番近いアイコンで自動入力する。
+      // 自動判定の精度は完全ではないため、切り出し画像とアイコン一覧を
+      // 表示し、いつでもワンクリックで選び直せるようにしてある。
+      let crops: (IconCropResult | null)[] | null = null;
       const foodLabelBbox = findLabelLineBbox(run.lines, '食材');
       if (foodLabelBbox) {
         try {
           const bitmap = await createImageBitmap(file);
           const slots = estimateIngredientSlots(foodLabelBbox, bitmap.width);
-          const crops = await Promise.all(
+          crops = await Promise.all(
             slots.map((slot) =>
               matchIngredientIcon(bitmap, slot.x, slot.y, slot.w, slot.h)
             )
@@ -76,8 +79,16 @@ export default function ImageImportSection() {
       entry.level = result.level ?? 1;
       entry.capturedTime = result.time;
       entry.imageFileName = file.name;
-      // 食材はスロットごとに複数候補からランダムに決まる(個体差がある)ため、
-      // 種族マスタの値をそのまま自動入力はしない(候補としては入力補助に使う)。
+      // 食材はアイコン照合の自動判定結果(見た目が一番近いもの)で仮入力する。
+      // 判定精度は完全ではないため、間違っていれば切り出し画像を見て
+      // アイコン一覧からワンクリックで選び直せるようにしてある。
+      if (crops) {
+        entry.ingredients = [
+          crops[0]?.best?.name ?? '',
+          crops[1]?.best?.name ?? '',
+          crops[2]?.best?.name ?? '',
+        ];
+      }
       // サブスキルは、各行の位置情報(バウンディングボックス)を使って
       // 画面上の並び(上の行→下の行、同じ行は左→右)の順に推定しているため、
       // ロック中(未解放)の枠を含めてそのままLv10/25/50/70/80へ割り当てる。
@@ -101,9 +112,8 @@ export default function ImageImportSection() {
         ゲーム画面のスクリーンショットから時刻・名前・レベル・メインスキルなどを自動抽出します。
         文字認識は完全ではないため、必ず内容を確認してから登録してください。
         タイプ・きのみ・メインスキルは、名前が正しく認識できれば種族マスタから自動入力されます。
-        食材は個体ごとにスロットごとの候補からランダムで決まるため自動入力はしませんが、
-        「食材」欄の位置からアイコン画像を切り出して表示するので、切り出し画像を見ながら
-        アイコン一覧(19種類)からクリックで選べます(自動判定は精度が低いため参考程度です)。
+        食材は「食材」欄のアイコン画像を見た目で判定して仮入力しますが、判定精度は高くないため、
+        間違っていたら切り出し画像を見ながらアイコン一覧(19種類)からクリックで選び直してください。
       </p>
       <input
         type="file"
