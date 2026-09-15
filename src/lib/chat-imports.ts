@@ -30,7 +30,6 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     id: 'chat-import-hinoarashi-20260915-1313',
     speciesId: 'ヒノアラシ',
     speciesName: 'ヒノアラシ',
-    nickname: '',
     level: 14,
     nature: '',
     medal: 'none',
@@ -46,8 +45,6 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     ingredients: ['あったかジンジャー', 'げきからハーブ', 'ピュアなオイル'],
     specialty: 'berry',
     berry: 'ヒメリのみ',
-    mainSkill: 'エナジーチャージS',
     imageFileName: '',
-    notes: '画像OCRでは正しく読み取れなかったため、チャットで共有された画像をClaudeが直接目視して登録。',
   }),
 ];

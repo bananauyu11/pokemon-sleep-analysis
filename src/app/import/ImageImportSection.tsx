@@ -90,7 +90,6 @@ export default function ImageImportSection() {
       entry.speciesId = matched?.id ?? '';
       entry.specialty = matched?.specialty ?? entry.specialty;
       entry.berry = matched?.berry ?? '';
-      entry.mainSkill = result.mainSkillGuess || matched?.mainSkill || '';
       entry.level = result.level ?? 1;
       entry.capturedTime = result.time;
       entry.imageFileName = file.name;
@@ -124,9 +123,9 @@ export default function ImageImportSection() {
     <div className="card flex flex-col gap-4 p-5">
       <h2 className="text-base font-bold text-brand-night-dark">画像取込(OCR)</h2>
       <p className="text-xs text-black/50">
-        ゲーム画面のスクリーンショットから時刻・名前・レベル・メインスキルなどを自動抽出します。
+        ゲーム画面のスクリーンショットから時刻・名前・レベルなどを自動抽出します。
         文字認識は完全ではないため、必ず内容を確認してから登録してください。
-        タイプ・きのみ・メインスキルは、名前が正しく認識できれば種族マスタから自動入力されます。
+        タイプ・きのみは、名前が正しく認識できれば種族マスタから自動入力されます。
         食材は「食材」欄のアイコン画像を見た目で判定して仮入力します(種族マスタで候補が
         判明しているポケモンは、その候補に絞り込んで判定します)。判定精度は高くないため、
         間違っていたら切り出し画像を見ながらアイコン一覧からクリックで選び直してください。
@@ -168,7 +167,6 @@ export default function ImageImportSection() {
           <p>推定した名前: {extraction.speciesGuess || '(不明)'}</p>
           <p>推定レベル: {extraction.level ?? '(不明)'}</p>
           <p>推定時刻: {extraction.time || '(不明)'}</p>
-          <p>推定メインスキル: {extraction.mainSkillGuess || '(不明)'}</p>
           <p>
             検出したサブスキル(ロック中の未解放スキルに表示されるLvバッジを手がかりに
             レベルを判定。判定できなかったレベルは空欄):{' '}

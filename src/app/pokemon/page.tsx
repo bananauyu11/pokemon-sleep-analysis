@@ -17,8 +17,7 @@ export default function PokemonListPage() {
     return entries.filter((e) => {
       if (medalFilter !== 'all' && e.medal !== medalFilter) return false;
       if (specialtyFilter !== 'all' && e.specialty !== specialtyFilter) return false;
-      if (q && !`${e.speciesName}${e.nickname}`.toLowerCase().includes(q.toLowerCase()))
-        return false;
+      if (q && !e.speciesName.toLowerCase().includes(q.toLowerCase())) return false;
       return true;
     });
   }, [entries, medalFilter, specialtyFilter, q]);
@@ -96,11 +95,6 @@ export default function PokemonListPage() {
               <div className="flex items-center justify-between">
                 <span className="font-bold text-brand-night-dark">
                   {e.speciesName || '(名前未設定)'}
-                  {e.nickname && (
-                    <span className="ml-1 text-xs font-normal text-black/40">
-                      ({e.nickname})
-                    </span>
-                  )}
                 </span>
                 <span className="text-xs text-black/40">Lv.{e.level}</span>
               </div>

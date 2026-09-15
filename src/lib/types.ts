@@ -54,7 +54,6 @@ export interface PokemonEntry {
   id: string;
   speciesId: string; // PokemonSpecies.id への参照 (未登録種の場合は '' もありうる)
   speciesName: string; // 冗長だが表示・CSV安定性のために保持
-  nickname: string;
   level: number;
   nature: string; // 性格
   medal: MedalRank;
@@ -65,9 +64,7 @@ export interface PokemonEntry {
   ingredientPattern: IngredientPattern; // 自動計算
   specialty: SpecialtyType; // 記録時点の種族データから複製
   berry: string;
-  mainSkill: string;
   imageFileName: string; // 取込元画像ファイル名(参考情報)
-  notes: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -82,7 +79,6 @@ export function createEmptyEntry(): PokemonEntry {
     id: '',
     speciesId: '',
     speciesName: '',
-    nickname: '',
     level: 1,
     nature: '',
     medal: 'none',
@@ -93,9 +89,7 @@ export function createEmptyEntry(): PokemonEntry {
     ingredientPattern: '',
     specialty: 'berry',
     berry: '',
-    mainSkill: '',
     imageFileName: '',
-    notes: '',
     createdAt: now,
     updatedAt: now,
   };

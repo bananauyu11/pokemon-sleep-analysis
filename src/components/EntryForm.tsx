@@ -72,7 +72,6 @@ export default function EntryForm({
       speciesId: found?.id ?? '',
       specialty: found?.specialty ?? prev.specialty,
       berry: found?.berry || prev.berry,
-      mainSkill: prev.mainSkill || found?.mainSkill || '',
       // 食材はスロットごとに複数候補からランダムに決まる(個体差がある)ため、
       // ここでは自動入力しない。種族マスタの候補はあくまで入力補助
       // (オートコンプリート)として使う。
@@ -130,18 +129,9 @@ export default function EntryForm({
           </datalist>
           {!matchedSpecies && entry.speciesName && (
             <p className="mt-1 text-xs text-amber-600">
-              種族マスタ未登録のため自動入力されません。タイプ・きのみ・メインスキル・食材は下記で手動入力してください。
+              種族マスタ未登録のため自動入力されません。タイプ・きのみ・食材は下記で手動入力してください。
             </p>
           )}
-        </div>
-
-        <div>
-          <label className="field-label">ニックネーム(任意)</label>
-          <input
-            className="field-input"
-            value={entry.nickname}
-            onChange={(e) => setEntry((p) => ({ ...p, nickname: e.target.value }))}
-          />
         </div>
 
         <div>
@@ -186,16 +176,6 @@ export default function EntryForm({
             value={entry.berry}
             onChange={(e) => setEntry((p) => ({ ...p, berry: e.target.value }))}
             placeholder="例: きんのみ"
-          />
-        </div>
-
-        <div>
-          <label className="field-label">メインスキル</label>
-          <input
-            className="field-input"
-            value={entry.mainSkill}
-            onChange={(e) => setEntry((p) => ({ ...p, mainSkill: e.target.value }))}
-            placeholder="例: 食材ゲットS"
           />
         </div>
 
@@ -352,17 +332,9 @@ export default function EntryForm({
         </p>
       </section>
 
-      <section>
-        <label className="field-label">メモ</label>
-        <textarea
-          className="field-input min-h-20"
-          value={entry.notes}
-          onChange={(e) => setEntry((p) => ({ ...p, notes: e.target.value }))}
-        />
-        {entry.imageFileName && (
-          <p className="mt-1 text-xs text-black/40">元画像: {entry.imageFileName}</p>
-        )}
-      </section>
+      {entry.imageFileName && (
+        <p className="text-xs text-black/40">元画像: {entry.imageFileName}</p>
+      )}
 
       <div className="flex items-center justify-between gap-2">
         {onDelete ? (

@@ -14,7 +14,6 @@ export interface OcrExtraction {
   // Lv(10/25/50/70/80) -> サブスキル名。そのレベルを判定できなかった場合は
   // キー自体が存在しない(誤ったレベルに割り当てるより、空欄の方が安全なため)。
   subSkillGuesses: Record<number, string>;
-  mainSkillGuess: string; // 「メインスキル」ラベル直後のテキスト(推測)
 }
 
 export interface OcrBbox {
@@ -460,25 +459,11 @@ export function extractFields(
   // detectSubSkillsByLevel のコメントを参照)。
   const subSkillGuesses = detectSubSkillsByLevel(run.lines, subSkillNames, run.paragraphs);
 
-  let mainSkillGuess = '';
-  const lines = rawText.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
-  const idx = lines.findIndex((l) => l.includes('メインスキル'));
-  if (idx >= 0) {
-    for (let i = idx + 1; i < Math.min(lines.length, idx + 3); i++) {
-      const candidate = lines[i].replace(/Lv\.?\s*\d+/i, '').trim();
-      if (candidate && !candidate.includes('サブスキル')) {
-        mainSkillGuess = candidate;
-        break;
-      }
-    }
-  }
-
   return {
     rawText,
     time,
     level,
     speciesGuess,
     subSkillGuesses,
-    mainSkillGuess,
   };
 }

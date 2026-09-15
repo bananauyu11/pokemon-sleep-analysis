@@ -6,11 +6,9 @@ import { computeIngredientPattern } from './ingredient-pattern';
 export const ENTRY_CSV_HEADERS = [
   'id',
   'speciesName',
-  'nickname',
   'level',
   'specialty',
   'berry',
-  'mainSkill',
   'nature',
   'medal',
   'caughtDate',
@@ -21,18 +19,15 @@ export const ENTRY_CSV_HEADERS = [
   'ingredient3',
   'ingredientPattern',
   'imageFileName',
-  'notes',
 ] as const;
 
 function toCsvRow(e: PokemonEntry): Record<string, string> {
   const row: Record<string, string> = {
     id: e.id,
     speciesName: e.speciesName,
-    nickname: e.nickname,
     level: String(e.level),
     specialty: e.specialty,
     berry: e.berry,
-    mainSkill: e.mainSkill,
     nature: e.nature,
     medal: e.medal,
     caughtDate: e.caughtDate,
@@ -42,7 +37,6 @@ function toCsvRow(e: PokemonEntry): Record<string, string> {
     ingredient3: e.ingredients[2] ?? '',
     ingredientPattern: e.ingredientPattern,
     imageFileName: e.imageFileName,
-    notes: e.notes,
   };
   for (const lv of SUBSKILL_LEVELS) {
     const found = e.subSkills.find((s) => s.level === lv);
@@ -124,7 +118,6 @@ export function parseEntriesCsv(csvText: string): CsvParseResult {
       id: row.id?.trim() || crypto.randomUUID(),
       speciesId: '',
       speciesName: (row.speciesName ?? '').trim(),
-      nickname: (row.nickname ?? '').trim(),
       level: Number.isFinite(level) && level > 0 ? level : 1,
       nature: (row.nature ?? '').trim(),
       medal: coerceMedal(row.medal),
@@ -137,9 +130,7 @@ export function parseEntriesCsv(csvText: string): CsvParseResult {
         computeIngredientPattern(ingredients),
       specialty: coerceSpecialty(row.specialty),
       berry: (row.berry ?? '').trim(),
-      mainSkill: (row.mainSkill ?? '').trim(),
       imageFileName: (row.imageFileName ?? '').trim(),
-      notes: (row.notes ?? '').trim(),
       createdAt: now,
       updatedAt: now,
     };
