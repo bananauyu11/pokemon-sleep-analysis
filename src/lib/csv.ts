@@ -1,6 +1,6 @@
 import Papa from 'papaparse';
 import type { MedalRank, PokemonEntry, SpecialtyType } from './types';
-import { SUBSKILL_LEVELS, emptySubSkills } from './types';
+import { SUBSKILL_LEVELS, emptySubSkills, isAdopted } from './types';
 import { computeIngredientPattern } from './ingredient-pattern';
 
 export const ENTRY_CSV_HEADERS = [
@@ -11,6 +11,7 @@ export const ENTRY_CSV_HEADERS = [
   'berry',
   'nature',
   'medal',
+  'adopted',
   'caughtDate',
   'capturedTime',
   ...SUBSKILL_LEVELS.map((lv) => `subSkillLv${lv}`),
@@ -30,6 +31,7 @@ function toCsvRow(e: PokemonEntry): Record<string, string> {
     berry: e.berry,
     nature: e.nature,
     medal: e.medal,
+    adopted: String(isAdopted(e)),
     caughtDate: e.caughtDate,
     capturedTime: e.capturedTime,
     ingredient1: e.ingredients[0] ?? '',
@@ -121,6 +123,7 @@ export function parseEntriesCsv(csvText: string): CsvParseResult {
       level: Number.isFinite(level) && level > 0 ? level : 1,
       nature: (row.nature ?? '').trim(),
       medal: coerceMedal(row.medal),
+      adopted: (row.adopted ?? '').trim() !== 'false',
       caughtDate: (row.caughtDate ?? '').trim(),
       capturedTime: (row.capturedTime ?? '').trim(),
       subSkills,

@@ -45,6 +45,7 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     ingredients: ['あったかジンジャー', 'げきからハーブ', 'ピュアなオイル'],
     specialty: 'berry',
     berry: 'ヒメリのみ',
+    adopted: true,
     imageFileName: '',
   }),
   // 2026-09-15 チャットに貼り付けられたコイル(Lv.14)のスクリーンショットから、
@@ -68,6 +69,7 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     ingredients: ['ピュアなオイル', 'げきからハーブ', 'げきからハーブ'],
     specialty: 'skill',
     berry: 'ベリブのみ',
+    adopted: true,
     imageFileName: '',
   }),
 ];

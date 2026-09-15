@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
+  isAdopted,
   MEDAL_LABELS,
   MEDAL_ORDER,
   SPECIALTY_LABELS,
@@ -210,6 +211,30 @@ export default function EntryForm({
               </option>
             ))}
           </select>
+        </div>
+
+        <div>
+          <label className="field-label">採用状況</label>
+          <div className="flex items-center gap-4 pt-2 text-sm">
+            <label className="flex items-center gap-1.5">
+              <input
+                type="radio"
+                name="adopted"
+                checked={isAdopted(entry)}
+                onChange={() => setEntry((p) => ({ ...p, adopted: true }))}
+              />
+              採用
+            </label>
+            <label className="flex items-center gap-1.5">
+              <input
+                type="radio"
+                name="adopted"
+                checked={!isAdopted(entry)}
+                onChange={() => setEntry((p) => ({ ...p, adopted: false }))}
+              />
+              未採用(博士に送った)
+            </label>
+          </div>
         </div>
 
         <div>

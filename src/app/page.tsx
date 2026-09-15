@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useEntries, useSubSkillNames } from '@/lib/hooks';
 import {
   GROUP_DEFS,
+  computeAdoptionCountsByMonth,
+  computeAdoptionCountsByYear,
   computePatternStats,
   computeSubSkillStats,
   type GroupBy,
@@ -68,6 +70,23 @@ export default function DashboardPage() {
         件数: mode === 'count' ? p.count : p.percent,
       })),
     [patternStats, mode]
+  );
+
+  const adoptionByYear = useMemo(
+    () => computeAdoptionCountsByYear(filteredEntries),
+    [filteredEntries]
+  );
+  const adoptionByYearChartData = useMemo(
+    () => adoptionByYear.map((r) => ({ label: r.label, 件数: r.count })),
+    [adoptionByYear]
+  );
+  const adoptionByMonth = useMemo(
+    () => computeAdoptionCountsByMonth(filteredEntries),
+    [filteredEntries]
+  );
+  const adoptionByMonthChartData = useMemo(
+    () => adoptionByMonth.map((r) => ({ label: r.label, 件数: r.count })),
+    [adoptionByMonth]
   );
 
   if (entries.length === 0) {
@@ -179,6 +198,30 @@ export default function DashboardPage() {
           categoryKey="pattern"
           valueSuffix={mode === 'percent' ? '%' : ''}
           height={200}
+        />
+      </div>
+
+      <div className="card p-4">
+        <h2 className="mb-3 text-sm font-bold text-brand-night-dark">
+          採用件数(年次) ※未採用(博士に送った)を除く、捕まえた日が未入力のものは対象外
+        </h2>
+        <GroupedBarChart
+          data={adoptionByYearChartData}
+          groups={[{ key: '件数', label: '件数', color: '#2f2761' }]}
+          categoryKey="label"
+          height={Math.max(160, adoptionByYearChartData.length * 40 + 60)}
+        />
+      </div>
+
+      <div className="card p-4">
+        <h2 className="mb-3 text-sm font-bold text-brand-night-dark">
+          採用件数(月次) ※未採用(博士に送った)を除く、捕まえた日が未入力のものは対象外
+        </h2>
+        <GroupedBarChart
+          data={adoptionByMonthChartData}
+          groups={[{ key: '件数', label: '件数', color: '#46c2a4' }]}
+          categoryKey="label"
+          height={Math.max(200, adoptionByMonthChartData.length * 32 + 60)}
         />
       </div>
     </div>

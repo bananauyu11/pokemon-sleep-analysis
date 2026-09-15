@@ -64,9 +64,20 @@ export interface PokemonEntry {
   ingredientPattern: IngredientPattern; // 自動計算
   specialty: SpecialtyType; // 記録時点の種族データから複製
   berry: string;
+  // 採用状況: 博士に送っておらず、ボックスで所有して使っているポケモンかどうか。
+  // undefined(スキーマ変更前の既存データ)は isAdopted() で「採用」扱いにする。
+  adopted: boolean;
   imageFileName: string; // 取込元画像ファイル名(参考情報)
   createdAt: string;
   updatedAt: string;
+}
+
+/**
+ * 採用状況の判定。既存データ(adoptedフィールド追加前に保存されたもの)は
+ * フィールド自体が存在しない場合があるため、false以外は「採用」とみなす。
+ */
+export function isAdopted(entry: Pick<PokemonEntry, 'adopted'>): boolean {
+  return entry.adopted !== false;
 }
 
 export function emptySubSkills(): SubSkillEntry[] {
@@ -89,6 +100,7 @@ export function createEmptyEntry(): PokemonEntry {
     ingredientPattern: '',
     specialty: 'berry',
     berry: '',
+    adopted: true,
     imageFileName: '',
     createdAt: now,
     updatedAt: now,

@@ -1,4 +1,5 @@
 import {
+  isAdopted,
   MEDAL_LABELS,
   MEDAL_ORDER,
   SPECIALTY_LABELS,
@@ -125,4 +126,41 @@ export function computePatternStats(entries: PokemonEntry[]): PatternStatRow[] {
       percent: Math.round((count / total) * 1000) / 10,
     }))
     .sort((a, b) => b.count - a.count);
+}
+
+export interface DateCountRow {
+  label: string; // 年次なら 'YYYY'、月次なら 'YYYY-MM'
+  count: number;
+}
+
+/**
+ * 採用(博士に送っていない)ポケモンの件数を、捕まえた日(caughtDate)の
+ * 年/年月ごとに集計する。捕まえた日が未入力の記録は集計対象外。
+ */
+function computeAdoptionCounts(
+  entries: PokemonEntry[],
+  labelOf: (caughtDate: string) => string | null
+): DateCountRow[] {
+  const counts = new Map<string, number>();
+  for (const e of entries) {
+    if (!isAdopted(e)) continue;
+    const label = labelOf(e.caughtDate);
+    if (!label) continue;
+    counts.set(label, (counts.get(label) ?? 0) + 1);
+  }
+  return [...counts.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([label, count]) => ({ label, count }));
+}
+
+export function computeAdoptionCountsByYear(entries: PokemonEntry[]): DateCountRow[] {
+  return computeAdoptionCounts(entries, (caughtDate) =>
+    /^\d{4}-\d{2}-\d{2}$/.test(caughtDate) ? caughtDate.slice(0, 4) : null
+  );
+}
+
+export function computeAdoptionCountsByMonth(entries: PokemonEntry[]): DateCountRow[] {
+  return computeAdoptionCounts(entries, (caughtDate) =>
+    /^\d{4}-\d{2}-\d{2}$/.test(caughtDate) ? caughtDate.slice(0, 7) : null
+  );
 }
