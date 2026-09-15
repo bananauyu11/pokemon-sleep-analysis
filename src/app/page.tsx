@@ -70,18 +70,6 @@ export default function DashboardPage() {
     [patternStats, mode]
   );
 
-  const medalCounts = useMemo(() => {
-    const c: Record<MedalRank, number> = { none: 0, bronze: 0, silver: 0, gold: 0 };
-    for (const e of entries) c[e.medal]++;
-    return c;
-  }, [entries]);
-
-  const specialtyCounts = useMemo(() => {
-    const c: Record<SpecialtyType, number> = { berry: 0, ingredient: 0, skill: 0, all: 0 };
-    for (const e of entries) c[e.specialty]++;
-    return c;
-  }, [entries]);
-
   if (entries.length === 0) {
     return (
       <div className="card flex flex-col items-center gap-3 p-10 text-center">
@@ -103,22 +91,6 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <StatCard label="総記録数" value={`${entries.length}件`} />
-        {MEDAL_ORDER.map((m) => (
-          <StatCard key={m} label={`メダル: ${MEDAL_LABELS[m]}`} value={`${medalCounts[m]}件`} />
-        ))}
-      </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {(Object.keys(SPECIALTY_LABELS) as SpecialtyType[]).map((s) => (
-          <StatCard
-            key={s}
-            label={`タイプ: ${SPECIALTY_LABELS[s]}`}
-            value={`${specialtyCounts[s]}件`}
-          />
-        ))}
-      </div>
-
       <div className="card flex flex-col gap-3 p-4">
         <h2 className="text-sm font-bold text-brand-night-dark">分析の絞り込み</h2>
         <div className="flex flex-wrap gap-3">
@@ -209,15 +181,6 @@ export default function DashboardPage() {
           height={200}
         />
       </div>
-    </div>
-  );
-}
-
-function StatCard({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="card flex flex-col gap-1 p-3">
-      <span className="text-xs text-black/40">{label}</span>
-      <span className="text-lg font-bold text-brand-night-dark">{value}</span>
     </div>
   );
 }
