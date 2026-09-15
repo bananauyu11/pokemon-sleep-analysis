@@ -50,8 +50,8 @@ export default function EntryForm({
   );
 
   const pattern = useMemo(
-    () => computeIngredientPattern(entry.ingredients),
-    [entry.ingredients]
+    () => computeIngredientPattern(entry.ingredients, matchedSpecies),
+    [entry.ingredients, matchedSpecies]
   );
 
   // スロットごとの入力候補: 選択中のポケモン(種族マスタ)で判明している
@@ -352,9 +352,6 @@ export default function EntryForm({
             );
           })}
         </div>
-        <p className="mt-1 text-xs text-black/40">
-          同じ食材が3つ→AAA、2つ→AAB、すべて異なる→ABC を自動判定します。
-        </p>
       </section>
 
       {entry.imageFileName && (

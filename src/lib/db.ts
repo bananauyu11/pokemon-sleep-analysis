@@ -3,6 +3,7 @@ import type { PokemonEntry, PokemonSpecies } from './types';
 import { DEFAULT_SPECIES } from './species-data';
 import { DEFAULT_SUBSKILLS } from './subskills';
 import { CHAT_IMPORTED_ENTRIES } from './chat-imports';
+import { computeIngredientPattern } from './ingredient-pattern';
 
 export interface SubSkillMasterRow {
   id: string; // = name (ユニークキー)
@@ -62,6 +63,7 @@ export async function ensureSeeded(): Promise<void> {
   });
 
   await applyChatImports();
+  await recomputeIngredientPatterns();
 }
 
 /**
@@ -83,6 +85,27 @@ async function applyChatImports(): Promise<void> {
       if (already) continue;
       await db.entries.add(importedEntry);
       await db.appliedImports.add({ id: importedEntry.id });
+    }
+  });
+}
+
+/**
+ * 食材配置パターン(ingredientPattern)の判定ロジックが変わった場合に、
+ * 既存の記録データにも最新のロジックを反映するため、起動のたびに
+ * 種族マスタの最新内容で再計算し、値が変わっていれば更新する
+ * (食材そのものは変更しない。パターンの表示のみを最新化する)。
+ */
+async function recomputeIngredientPatterns(): Promise<void> {
+  const speciesByName = new Map(DEFAULT_SPECIES.map((s) => [s.name, s]));
+  const entries = await db.entries.toArray();
+
+  await db.transaction('rw', db.entries, async () => {
+    for (const e of entries) {
+      const species = speciesByName.get(e.speciesName);
+      const pattern = computeIngredientPattern(e.ingredients, species);
+      if (pattern !== e.ingredientPattern) {
+        await db.entries.update(e.id, { ingredientPattern: pattern });
+      }
     }
   });
 }

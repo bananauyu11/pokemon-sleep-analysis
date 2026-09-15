@@ -1,4 +1,5 @@
 import { computeIngredientPattern } from './ingredient-pattern';
+import { DEFAULT_SPECIES } from './species-data';
 import type { PokemonEntry } from './types';
 
 /**
@@ -15,9 +16,10 @@ import type { PokemonEntry } from './types';
  */
 function entry(partial: Omit<PokemonEntry, 'ingredientPattern' | 'createdAt' | 'updatedAt'>): PokemonEntry {
   const now = new Date().toISOString();
+  const species = DEFAULT_SPECIES.find((s) => s.name === partial.speciesName);
   return {
     ...partial,
-    ingredientPattern: computeIngredientPattern(partial.ingredients),
+    ingredientPattern: computeIngredientPattern(partial.ingredients, species),
     createdAt: now,
     updatedAt: now,
   };

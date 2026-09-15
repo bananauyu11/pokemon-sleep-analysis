@@ -1,5 +1,5 @@
 import Papa from 'papaparse';
-import type { MedalRank, PokemonEntry, SpecialtyType } from './types';
+import type { MedalRank, PokemonEntry, PokemonSpecies, SpecialtyType } from './types';
 import { SUBSKILL_LEVELS, emptySubSkills, isAdopted } from './types';
 import { computeIngredientPattern } from './ingredient-pattern';
 
@@ -88,8 +88,14 @@ export interface CsvParseResult {
 /**
  * ポケモン記録のCSVを取り込み、PokemonEntry配列に変換する。
  * ヘッダー名は entriesToCsv が出力する形式(または相当する日本語表記)を想定。
+ * `speciesList` は ingredientPattern 列が無い/不正な場合のフォールバック計算
+ * (種族マスタの食材スロット候補との照合)に使う。省略時はフォールバック
+ * 計算ができず、判定不能な場合は空文字になる。
  */
-export function parseEntriesCsv(csvText: string): CsvParseResult {
+export function parseEntriesCsv(
+  csvText: string,
+  speciesList: PokemonSpecies[] = []
+): CsvParseResult {
   const parsed = Papa.parse<Record<string, string>>(csvText, {
     header: true,
     skipEmptyLines: true,
@@ -98,6 +104,8 @@ export function parseEntriesCsv(csvText: string): CsvParseResult {
   const errors: string[] = parsed.errors.map(
     (e) => `行${(e.row ?? 0) + 2}: ${e.message}`
   );
+
+  const speciesByName = new Map(speciesList.map((s) => [s.name, s]));
 
   const entries: PokemonEntry[] = parsed.data.map((row, idx) => {
     const now = new Date().toISOString();
@@ -112,14 +120,15 @@ export function parseEntriesCsv(csvText: string): CsvParseResult {
     }));
 
     const level = Number.parseInt(row.level ?? '', 10);
-    if (!row.speciesName) {
+    const speciesName = (row.speciesName ?? '').trim();
+    if (!speciesName) {
       errors.push(`CSV行${idx + 2}: speciesNameが空です`);
     }
 
     return {
       id: row.id?.trim() || crypto.randomUUID(),
       speciesId: '',
-      speciesName: (row.speciesName ?? '').trim(),
+      speciesName,
       level: Number.isFinite(level) && level > 0 ? level : 1,
       nature: (row.nature ?? '').trim(),
       medal: coerceMedal(row.medal),
@@ -130,7 +139,7 @@ export function parseEntriesCsv(csvText: string): CsvParseResult {
       ingredients,
       ingredientPattern:
         (row.ingredientPattern as PokemonEntry['ingredientPattern']) ||
-        computeIngredientPattern(ingredients),
+        computeIngredientPattern(ingredients, speciesByName.get(speciesName)),
       specialty: coerceSpecialty(row.specialty),
       berry: (row.berry ?? '').trim(),
       imageFileName: (row.imageFileName ?? '').trim(),

@@ -33,8 +33,9 @@ export interface SubSkillEntry {
   skill: string; // サブスキル名 (未取得なら空文字)
 }
 
-// 食材配置パターン (3スロット中、同一食材が何個重複するかの形)
-export type IngredientPattern = 'AAA' | 'AAB' | 'ABC' | '';
+// 食材配置パターン。A=スロット1の候補、B=スロット2の候補、C=スロット3の候補
+// (詳細は ingredient-pattern.ts の computeIngredientPattern を参照)。
+export type IngredientPattern = 'AAA' | 'AAB' | 'AAC' | 'ABA' | 'ABB' | 'ABC' | '';
 
 export interface PokemonSpecies {
   id: string; // slug (ローマ字などユニークID)

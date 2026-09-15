@@ -3,9 +3,11 @@
 import { useState } from 'react';
 import { db } from '@/lib/db';
 import { parseEntriesCsv } from '@/lib/csv';
+import { useSpeciesList } from '@/lib/hooks';
 import type { PokemonEntry } from '@/lib/types';
 
 export default function CsvImportSection() {
+  const speciesList = useSpeciesList();
   const [preview, setPreview] = useState<PokemonEntry[]>([]);
   const [errors, setErrors] = useState<string[]>([]);
   const [fileName, setFileName] = useState('');
@@ -15,7 +17,7 @@ export default function CsvImportSection() {
     setDone(false);
     setFileName(file.name);
     const text = await file.text();
-    const { entries, errors } = parseEntriesCsv(text);
+    const { entries, errors } = parseEntriesCsv(text, speciesList);
     setPreview(entries);
     setErrors(errors);
   }
