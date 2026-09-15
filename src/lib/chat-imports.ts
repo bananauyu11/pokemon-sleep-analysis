@@ -47,4 +47,27 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     berry: 'ヒメリのみ',
     imageFileName: '',
   }),
+  // 2026-09-15 チャットに貼り付けられたコイル(Lv.14)のスクリーンショットから、
+  // 画像を直接目視して登録。
+  entry({
+    id: 'chat-import-koiru-20260915-0718',
+    speciesId: 'コイル',
+    speciesName: 'コイル',
+    level: 14,
+    nature: '',
+    medal: 'none',
+    caughtDate: '',
+    capturedTime: '07:18',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップL' },
+      { level: 25, skill: 'スキル確率アップM' },
+      { level: 50, skill: 'リサーチEXPボーナス' },
+      { level: 70, skill: 'おてつだいボーナス' },
+      { level: 80, skill: '食材確率アップS' },
+    ],
+    ingredients: ['ピュアなオイル', 'げきからハーブ', 'げきからハーブ'],
+    specialty: 'skill',
+    berry: 'ベリブのみ',
+    imageFileName: '',
+  }),
 ];
