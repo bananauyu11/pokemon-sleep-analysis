@@ -7,6 +7,7 @@ import {
   GROUP_DEFS,
   computeAdoptionCountsByMonth,
   computeAdoptionCountsByYear,
+  computeAdoptionStreakStats,
   computePatternStats,
   computeSubSkillStats,
   type GroupBy,
@@ -89,6 +90,9 @@ export default function DashboardPage() {
     [adoptionByMonth]
   );
 
+  // フィルタとは無関係に、全記録から見た採用の間隔なので entries(全件)を使う
+  const streakStats = useMemo(() => computeAdoptionStreakStats(entries), [entries]);
+
   if (entries.length === 0) {
     return (
       <div className="card flex flex-col items-center gap-3 p-10 text-center">
@@ -110,6 +114,23 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-5">
+      <div className="flex flex-wrap gap-3">
+        {streakStats.daysSinceLastAdopted !== null && (
+          <div className="card flex flex-1 min-w-[140px] flex-col gap-1 p-3">
+            <span className="text-xs text-black/40">前回の採用から</span>
+            <span className="text-lg font-bold text-brand-night-dark">
+              {streakStats.daysSinceLastAdopted}日
+            </span>
+          </div>
+        )}
+        <div className="card flex flex-1 min-w-[140px] flex-col gap-1 p-3">
+          <span className="text-xs text-black/40">最長記録</span>
+          <span className="text-lg font-bold text-brand-night-dark">
+            {streakStats.longestGapDays}日
+          </span>
+        </div>
+      </div>
+
       <div className="card flex flex-col gap-3 p-4">
         <h2 className="text-sm font-bold text-brand-night-dark">分析の絞り込み</h2>
         <div className="flex flex-wrap gap-3">

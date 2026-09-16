@@ -164,3 +164,63 @@ export function computeAdoptionCountsByMonth(entries: PokemonEntry[]): DateCount
     /^\d{4}-\d{2}-\d{2}$/.test(caughtDate) ? caughtDate.slice(0, 7) : null
   );
 }
+
+// これまでの最長記録の初期値。アプリで記録を取り始める前からの
+// 実際の記録(過去に54日間、新しい採用個体が見つからなかったことがある)を
+// 元にした値。記録データから計算した最長日数がこれを上回った場合のみ更新する。
+const INITIAL_LONGEST_ADOPTION_GAP_DAYS = 54;
+
+function parseDateOnly(dateStr: string): Date | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return null;
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+function diffInDays(from: Date, to: Date): number {
+  return Math.round((to.getTime() - from.getTime()) / 86400000);
+}
+
+export interface AdoptionStreakStats {
+  // 最後に採用個体を見つけた日から本日までの経過日数。
+  // 記録が無い場合、または最後に見つけた日が本日の場合はnull。
+  daysSinceLastAdopted: number | null;
+  // これまでの最長記録(採用個体と次の採用個体の間隔のうち最大のもの)。
+  // 記録データから計算した値と INITIAL_LONGEST_ADOPTION_GAP_DAYS の大きい方。
+  longestGapDays: number;
+}
+
+/**
+ * 「採用」ポケモンを最後に見つけてからの経過日数と、これまでの最長記録
+ * (採用個体を見つける間隔として最も長かった日数)を計算する。
+ * 捕まえた日(caughtDate)が入力されている採用済み記録のみが対象。
+ */
+export function computeAdoptionStreakStats(
+  entries: PokemonEntry[],
+  today: Date = new Date()
+): AdoptionStreakStats {
+  const dates = entries
+    .filter((e) => isAdopted(e))
+    .map((e) => parseDateOnly(e.caughtDate))
+    .filter((d): d is Date => d !== null)
+    .sort((a, b) => a.getTime() - b.getTime());
+
+  let longestGapDays = INITIAL_LONGEST_ADOPTION_GAP_DAYS;
+  for (let i = 1; i < dates.length; i++) {
+    const gap = diffInDays(dates[i - 1], dates[i]);
+    if (gap > longestGapDays) longestGapDays = gap;
+  }
+
+  if (dates.length === 0) {
+    return { daysSinceLastAdopted: null, longestGapDays };
+  }
+
+  const todayOnly = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  const lastDate = dates[dates.length - 1];
+  const daysSinceLastAdopted = diffInDays(lastDate, todayOnly);
+  if (daysSinceLastAdopted > longestGapDays) longestGapDays = daysSinceLastAdopted;
+
+  return {
+    daysSinceLastAdopted: daysSinceLastAdopted > 0 ? daysSinceLastAdopted : null,
+    longestGapDays,
+  };
+}
