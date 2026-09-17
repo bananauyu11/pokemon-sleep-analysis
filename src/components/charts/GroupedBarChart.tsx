@@ -18,6 +18,8 @@ interface GroupedBarChartProps {
   categoryKey: string;
   valueSuffix?: string;
   height?: number;
+  /** 'bars'(既定): カテゴリを縦に並べた横棒グラフ。'columns': カテゴリを横に並べた縦棒グラフ。 */
+  orientation?: 'bars' | 'columns';
 }
 
 export default function GroupedBarChart({
@@ -26,8 +28,10 @@ export default function GroupedBarChart({
   categoryKey,
   valueSuffix = '',
   height,
+  orientation = 'bars',
 }: GroupedBarChartProps) {
-  const chartHeight = height ?? Math.max(280, data.length * 40 + 60);
+  const isColumns = orientation === 'columns';
+  const chartHeight = height ?? (isColumns ? 220 : Math.max(280, data.length * 40 + 60));
 
   if (data.length === 0) {
     return (
@@ -41,26 +45,54 @@ export default function GroupedBarChart({
     <ResponsiveContainer width="100%" height={chartHeight}>
       <BarChart
         data={data}
-        layout="vertical"
-        margin={{ top: 8, right: 24, bottom: 8, left: 8 }}
+        layout={isColumns ? 'horizontal' : 'vertical'}
+        margin={{ top: 8, right: 16, bottom: 8, left: 8 }}
+        barCategoryGap={isColumns ? '30%' : undefined}
       >
-        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#eee" />
-        <XAxis
-          type="number"
-          tickFormatter={(v: number) => `${v}${valueSuffix}`}
-          fontSize={12}
+        <CartesianGrid
+          strokeDasharray="3 3"
+          horizontal={!isColumns}
+          vertical={isColumns}
+          stroke="#eee"
         />
-        <YAxis
-          type="category"
-          dataKey={categoryKey}
-          width={140}
-          fontSize={12}
-          interval={0}
-        />
+        {isColumns ? (
+          <>
+            <XAxis dataKey={categoryKey} type="category" fontSize={12} />
+            <YAxis
+              type="number"
+              tickFormatter={(v: number) => `${v}${valueSuffix}`}
+              fontSize={12}
+              width={36}
+              allowDecimals={false}
+            />
+          </>
+        ) : (
+          <>
+            <XAxis
+              type="number"
+              tickFormatter={(v: number) => `${v}${valueSuffix}`}
+              fontSize={12}
+            />
+            <YAxis
+              type="category"
+              dataKey={categoryKey}
+              width={140}
+              fontSize={12}
+              interval={0}
+            />
+          </>
+        )}
         <Tooltip formatter={(value) => `${value}${valueSuffix}`} />
         {groups.length > 1 && <Legend />}
         {groups.map((g) => (
-          <Bar key={g.key} dataKey={g.key} name={g.label} fill={g.color} radius={[0, 4, 4, 0]} />
+          <Bar
+            key={g.key}
+            dataKey={g.key}
+            name={g.label}
+            fill={g.color}
+            radius={isColumns ? [4, 4, 0, 0] : [0, 4, 4, 0]}
+            maxBarSize={isColumns ? 40 : 28}
+          />
         ))}
       </BarChart>
     </ResponsiveContainer>

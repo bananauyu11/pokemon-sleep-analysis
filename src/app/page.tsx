@@ -31,6 +31,7 @@ export default function DashboardPage() {
   const [mode, setMode] = useState<ValueMode>('count');
   const [specialtyFilter, setSpecialtyFilter] = useState<SpecialtyType | 'all'>('all');
   const [medalFilter, setMedalFilter] = useState<MedalRank | 'all'>('all');
+  const [adoptionPeriod, setAdoptionPeriod] = useState<'month' | 'year'>('month');
 
   const filteredEntries = useMemo(
     () =>
@@ -89,6 +90,8 @@ export default function DashboardPage() {
     () => adoptionByMonth.map((r) => ({ label: r.label, 件数: r.count })),
     [adoptionByMonth]
   );
+  const adoptionChartData =
+    adoptionPeriod === 'month' ? adoptionByMonthChartData : adoptionByYearChartData;
 
   // フィルタとは無関係に、全記録から見た採用の間隔なので entries(全件)を使う
   const streakStats = useMemo(() => computeAdoptionStreakStats(entries), [entries]);
@@ -207,40 +210,43 @@ export default function DashboardPage() {
       </div>
 
       <div className="card p-4">
-        <h2 className="mb-3 text-sm font-bold text-brand-night-dark">
-          食材配列パターン ({mode === 'count' ? '件数' : '割合(%)'})
-        </h2>
+        <h2 className="mb-3 text-sm font-bold text-brand-night-dark">食材配列パターン</h2>
         <GroupedBarChart
           data={patternChartData}
           groups={[{ key: '件数', label: '件数', color: '#46c2a4' }]}
           categoryKey="pattern"
           valueSuffix={mode === 'percent' ? '%' : ''}
-          height={200}
+          orientation="columns"
         />
       </div>
 
-      <div className="card p-4">
-        <h2 className="mb-3 text-sm font-bold text-brand-night-dark">
-          採用件数(年次) ※未採用を除く、捕まえた日が未入力のものは対象外
-        </h2>
+      <div className="card flex flex-col gap-3 p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold text-brand-night-dark">採用件数</h2>
+          <div className="flex rounded-full bg-black/5 p-0.5 text-sm">
+            {(['month', 'year'] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setAdoptionPeriod(p)}
+                className={`rounded-full px-3 py-1 transition ${
+                  adoptionPeriod === p
+                    ? 'bg-brand-accent font-medium text-brand-night-dark'
+                    : 'text-black/50'
+                }`}
+              >
+                {p === 'month' ? '月' : '年'}
+              </button>
+            ))}
+          </div>
+        </div>
         <GroupedBarChart
-          data={adoptionByYearChartData}
+          data={adoptionChartData}
           groups={[{ key: '件数', label: '件数', color: '#2f2761' }]}
           categoryKey="label"
-          height={Math.max(160, adoptionByYearChartData.length * 40 + 60)}
+          orientation="columns"
         />
-      </div>
-
-      <div className="card p-4">
-        <h2 className="mb-3 text-sm font-bold text-brand-night-dark">
-          採用件数(月次) ※未採用を除く、捕まえた日が未入力のものは対象外
-        </h2>
-        <GroupedBarChart
-          data={adoptionByMonthChartData}
-          groups={[{ key: '件数', label: '件数', color: '#46c2a4' }]}
-          categoryKey="label"
-          height={Math.max(200, adoptionByMonthChartData.length * 32 + 60)}
-        />
+        <p className="text-[11px] text-black/40">※未採用・捕まえた日未入力は除く</p>
       </div>
     </div>
   );
