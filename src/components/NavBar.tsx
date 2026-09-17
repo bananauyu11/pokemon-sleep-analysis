@@ -3,10 +3,12 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+// 「取込」機能(画像OCR/CSV取込)は現在ナビから非表示にしているが、
+// 必要になれば `{ href: '/import', label: '取込' }` を戻すだけで復活する
+// (src/app/import 配下のコード自体は削除せず残してある)。
 const LINKS = [
   { href: '/', label: '分析' },
   { href: '/pokemon', label: '記録一覧' },
-  { href: '/import', label: '取込' },
 ];
 
 export default function NavBar() {

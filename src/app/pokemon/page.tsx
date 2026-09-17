@@ -79,7 +79,7 @@ export default function PokemonListPage() {
 
       {filtered.length === 0 ? (
         <p className="card p-8 text-center text-sm text-black/40">
-          記録がありません。「取込」から登録してください。
+          記録がありません。
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">

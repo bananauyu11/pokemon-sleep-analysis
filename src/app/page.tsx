@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
 import { useEntries, useSubSkillNames } from '@/lib/hooks';
 import {
   GROUP_DEFS,
@@ -100,14 +99,6 @@ export default function DashboardPage() {
     return (
       <div className="card flex flex-col items-center gap-3 p-10 text-center">
         <p className="text-lg font-bold text-brand-night-dark">まだ記録がありません</p>
-        <p className="text-sm text-black/50">
-          「取込」からスクリーンショットやCSVを読み込んでください。
-        </p>
-        <div className="mt-2 flex gap-2">
-          <Link href="/import" className="btn-accent">
-            取込画面へ
-          </Link>
-        </div>
       </div>
     );
   }
