@@ -98,13 +98,10 @@ export default function DashboardPage() {
       <div className="card flex flex-col items-center gap-3 p-10 text-center">
         <p className="text-lg font-bold text-brand-night-dark">まだ記録がありません</p>
         <p className="text-sm text-black/50">
-          「手動追加」でポケモンを登録するか、「取込」からスクリーンショットやCSVを読み込んでください。
+          「取込」からスクリーンショットやCSVを読み込んでください。
         </p>
         <div className="mt-2 flex gap-2">
-          <Link href="/pokemon/new" className="btn-accent">
-            手動追加する
-          </Link>
-          <Link href="/import" className="btn-ghost">
+          <Link href="/import" className="btn-accent">
             取込画面へ
           </Link>
         </div>
@@ -224,7 +221,7 @@ export default function DashboardPage() {
 
       <div className="card p-4">
         <h2 className="mb-3 text-sm font-bold text-brand-night-dark">
-          採用件数(年次) ※未採用(博士に送った)を除く、捕まえた日が未入力のものは対象外
+          採用件数(年次) ※未採用を除く、捕まえた日が未入力のものは対象外
         </h2>
         <GroupedBarChart
           data={adoptionByYearChartData}
@@ -236,7 +233,7 @@ export default function DashboardPage() {
 
       <div className="card p-4">
         <h2 className="mb-3 text-sm font-bold text-brand-night-dark">
-          採用件数(月次) ※未採用(博士に送った)を除く、捕まえた日が未入力のものは対象外
+          採用件数(月次) ※未採用を除く、捕まえた日が未入力のものは対象外
         </h2>
         <GroupedBarChart
           data={adoptionByMonthChartData}

@@ -23,18 +23,3 @@ export function useSubSkillNames(): string[] {
   const rows = useLiveQuery(() => db.subskillMaster.orderBy('name').toArray(), []);
   return (rows ?? []).map((r) => r.name);
 }
-
-export function useIngredientSuggestions(): string[] {
-  const entries = useEntries();
-  const species = useSpeciesList();
-  return useLiveQuery(async () => {
-    const set = new Set<string>();
-    for (const e of entries) {
-      for (const ing of e.ingredients) if (ing) set.add(ing);
-    }
-    for (const s of species) {
-      for (const opts of s.ingredientOptions) for (const o of opts) set.add(o);
-    }
-    return [...set].sort();
-  }, [entries, species]) ?? [];
-}

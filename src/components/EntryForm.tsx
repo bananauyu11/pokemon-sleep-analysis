@@ -14,10 +14,13 @@ import {
 } from '@/lib/types';
 import { NATURES } from '@/lib/natures';
 import { computeIngredientPattern } from '@/lib/ingredient-pattern';
-import { useIngredientSuggestions, useSpeciesList, useSubSkillNames } from '@/lib/hooks';
+import { useSpeciesList, useSubSkillNames } from '@/lib/hooks';
 import { ingredientCandidatesForSlot } from '@/lib/species-data';
+import { INGREDIENT_ICONS } from '@/lib/ingredients';
 import type { IconCropResult } from '@/lib/icon-match';
 import IngredientIconPicker from './IngredientIconPicker';
+
+const ALL_INGREDIENT_NAMES = INGREDIENT_ICONS.map((ing) => ing.name);
 
 interface EntryFormProps {
   initial: PokemonEntry;
@@ -38,7 +41,6 @@ export default function EntryForm({
   const router = useRouter();
   const speciesList = useSpeciesList();
   const subSkillNames = useSubSkillNames();
-  const ingredientSuggestions = useIngredientSuggestions();
 
   const [entry, setEntry] = useState<PokemonEntry>(initial);
   const [saving, setSaving] = useState(false);
@@ -54,15 +56,14 @@ export default function EntryForm({
     [entry.ingredients, matchedSpecies]
   );
 
-  // スロットごとの入力候補: 選択中のポケモン(種族マスタ)で判明している
-  // 候補を優先的に表示し、それ以外の候補(他のポケモンで使われている食材名)も
-  // 補足として続ける。食材の抽選は手前のスロットの候補も引き継ぐため
-  // (例: 3番目のスロットには1・2番目の食材も出ることがある)、
-  // 候補はスロット0〜iの和集合で計算する。
-  function slotIngredientSuggestions(i: 0 | 1 | 2): string[] {
+  // スロットごとの選択肢: 選択中のポケモン(種族マスタ)で判明している候補
+  // だけに絞り込む(食材の抽選は手前のスロットの候補も引き継ぐため、例えば
+  // 3番目のスロットには1・2番目の食材も出ることがある。スロット0〜iの
+  // 和集合が実際に起こり得る候補)。種族が未登録、または候補が1つも
+  // 判明していない場合のみ、19種類全体から選べるようにする。
+  function slotIngredientOptions(i: 0 | 1 | 2): string[] {
     const known = ingredientCandidatesForSlot(matchedSpecies, i);
-    const rest = ingredientSuggestions.filter((s) => !known.includes(s));
-    return [...known, ...rest];
+    return known.length > 0 ? known : ALL_INGREDIENT_NAMES;
   }
 
   function handleSpeciesChange(name: string) {
@@ -232,7 +233,7 @@ export default function EntryForm({
                 checked={!isAdopted(entry)}
                 onChange={() => setEntry((p) => ({ ...p, adopted: false }))}
               />
-              未採用(博士に送った)
+              未採用
             </label>
           </div>
         </div>
@@ -295,7 +296,9 @@ export default function EntryForm({
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           {([0, 1, 2] as const).map((i) => {
             const known = ingredientCandidatesForSlot(matchedSpecies, i);
+            const options = slotIngredientOptions(i);
             const crop = ingredientCrops?.[i];
+            const current = entry.ingredients[i];
             return (
               <div key={i}>
                 <label className="field-label">食材{i + 1}</label>
@@ -333,21 +336,21 @@ export default function EntryForm({
                     </p>
                   </div>
                 )}
-                <input
-                  list={`ingredient-names-${i}`}
-                  className="field-input"
-                  value={entry.ingredients[i]}
+                <select
+                  className="field-select"
+                  value={current}
                   onChange={(e) => updateIngredient(i, e.target.value)}
-                  placeholder="食材名"
-                />
-                <datalist id={`ingredient-names-${i}`}>
-                  {slotIngredientSuggestions(i).map((n) => (
-                    <option key={n} value={n} />
+                >
+                  <option value="">未選択</option>
+                  {options.map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
                   ))}
-                </datalist>
-                {known.length > 0 && (
-                  <p className="mt-1 text-[11px] text-black/40">候補: {known.join(' / ')}</p>
-                )}
+                  {current && !options.includes(current) && (
+                    <option value={current}>{current}(候補外)</option>
+                  )}
+                </select>
               </div>
             );
           })}

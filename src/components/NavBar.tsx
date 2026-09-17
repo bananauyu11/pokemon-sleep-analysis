@@ -6,7 +6,6 @@ import { usePathname } from 'next/navigation';
 const LINKS = [
   { href: '/', label: '分析' },
   { href: '/pokemon', label: '記録一覧' },
-  { href: '/pokemon/new', label: '手動追加' },
   { href: '/import', label: '取込' },
 ];
 

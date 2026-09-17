@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useEntries } from '@/lib/hooks';
 import { MedalBadge, SpecialtyBadge } from '@/components/Badges';
 import { MEDAL_LABELS, MEDAL_ORDER, SPECIALTY_LABELS, type MedalRank, type SpecialtyType } from '@/lib/types';
@@ -41,9 +41,6 @@ export default function PokemonListPage() {
           <button className="btn-ghost" onClick={handleExport}>
             CSVエクスポート
           </button>
-          <Link href="/pokemon/new" className="btn-accent">
-            + 追加
-          </Link>
         </div>
       </div>
 
@@ -82,7 +79,7 @@ export default function PokemonListPage() {
 
       {filtered.length === 0 ? (
         <p className="card p-8 text-center text-sm text-black/40">
-          記録がありません。「手動追加」または「取込」から登録してください。
+          記録がありません。「取込」から登録してください。
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
