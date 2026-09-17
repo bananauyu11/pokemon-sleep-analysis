@@ -74,4 +74,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: true,
     imageFileName: '',
   }),
+  // 2026-09-17 チャットに貼り付けられたヨーギラス(Lv.13)のスクリーンショットから、
+  // 画像を直接目視して登録。食材アイコンはリファレンス画像と比較して判定
+  // (スロット1・2はジンジャーの根っこ状の形、スロット3は大豆の房+緑の芽が
+  // 見えることから区別した)。
+  entry({
+    id: 'chat-import-yogirasu-20260917',
+    speciesId: 'ヨーギラス',
+    speciesName: 'ヨーギラス',
+    level: 13,
+    nature: '',
+    medal: 'none',
+    caughtDate: '',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'げんき回復ボーナス' },
+      { level: 25, skill: '食材確率アップM' },
+      { level: 50, skill: '食材確率アップS' },
+      { level: 70, skill: 'スキルレベルアップS' },
+      { level: 80, skill: 'スキル確率アップS' },
+    ],
+    ingredients: ['あったかジンジャー', 'あったかジンジャー', 'ワカクサ大豆'],
+    specialty: 'ingredient',
+    berry: 'オボンのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
 ];
