@@ -100,4 +100,55 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: true,
     imageFileName: '',
   }),
+  // 2026-09-19 チャットに貼り付けられた2枚のネイティのスクリーンショットは、
+  // サブスキルの内容が食い違っている(同じ個体なら解放済みのLv10サブスキルが
+  // 変わることはない)ため、別々の2個体と判断してそれぞれ登録した。
+  // 1個体目(Lv.14, SP479)。食材アイコンは画像上部が見切れており判定不能のため未入力。
+  entry({
+    id: 'chat-import-neity-a-20260919',
+    speciesId: 'ネイティ',
+    speciesName: 'ネイティ',
+    level: 14,
+    nature: '',
+    medal: 'none',
+    caughtDate: '',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいボーナス' },
+      { level: 25, skill: 'おてつだいスピードS' },
+      { level: 50, skill: '食材確率アップS' },
+      { level: 70, skill: '最大所持数アップS' },
+      { level: 80, skill: 'おてつだいスピードM' },
+    ],
+    ingredients: ['', '', ''],
+    specialty: 'berry',
+    berry: 'マゴのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
+  // 2個体目(Lv.15, SP512)。食材アイコンはリファレンス画像と比較して判定
+  // (スロット1・3はとくせんエッグの白い卵形、スロット2はリラックスカカオの
+  // 茶色い涙形+緑の葉で区別)。
+  entry({
+    id: 'chat-import-neity-b-20260919',
+    speciesId: 'ネイティ',
+    speciesName: 'ネイティ',
+    level: 15,
+    nature: '',
+    medal: 'none',
+    caughtDate: '',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'げんき回復ボーナス' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: '最大所持数アップL' },
+      { level: 70, skill: 'スキルレベルアップM' },
+      { level: 80, skill: 'おてつだいスピードS' },
+    ],
+    ingredients: ['とくせんエッグ', 'リラックスカカオ', 'とくせんエッグ'],
+    specialty: 'berry',
+    berry: 'マゴのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
 ];
