@@ -151,4 +151,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: true,
     imageFileName: '',
   }),
+  // 2026-09-20 チャットに貼り付けられた2枚のムンナ(Lv.14, SP504)のスクリーンショットから
+  // 画像を直接目視して登録(同じ個体の別スクロール位置)。食材アイコンは3枠とも
+  // 白いボトルに青いラベルのモーモーミルクで一致。
+  entry({
+    id: 'chat-import-munna-20260920',
+    speciesId: 'ムンナ',
+    speciesName: 'ムンナ',
+    level: 14,
+    nature: 'きまぐれ',
+    medal: 'none',
+    caughtDate: '',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキルレベルアップM' },
+      { level: 25, skill: '食材確率アップS' },
+      { level: 50, skill: '最大所持数アップL' },
+      { level: 70, skill: '最大所持数アップS' },
+      { level: 80, skill: 'げんき回復ボーナス' },
+    ],
+    ingredients: ['モーモーミルク', 'モーモーミルク', 'モーモーミルク'],
+    specialty: 'berry',
+    berry: 'マゴのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
 ];
