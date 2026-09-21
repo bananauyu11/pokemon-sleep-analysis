@@ -202,4 +202,83 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: true,
     imageFileName: '',
   }),
+  // 2026-09-22 チャットに貼り付けられた2枚のネイティ(Lv.14, SP452)のスクリーンショットから
+  // 画像を直接目視して登録(同じ個体の別スクロール位置。既存のネイティ2個体とはSPが
+  // 異なるため別個体)。食材アイコンはリファレンス画像と比較して判定
+  // (スロット1・3=とくせんエッグ、スロット2=リラックスカカオ)。
+  entry({
+    id: 'chat-import-neity-c-20260922',
+    speciesId: 'ネイティ',
+    speciesName: 'ネイティ',
+    level: 14,
+    nature: 'のんき',
+    medal: 'none',
+    caughtDate: '2026-09-22',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップS' },
+      { level: 25, skill: '食材確率アップM' },
+      { level: 50, skill: 'おてつだいスピードS' },
+      { level: 70, skill: 'おてつだいスピードM' },
+      { level: 80, skill: '最大所持数アップL' },
+    ],
+    ingredients: ['とくせんエッグ', 'リラックスカカオ', 'とくせんエッグ'],
+    specialty: 'berry',
+    berry: 'マゴのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
+  // 2026-09-22 チャットに貼り付けられた2枚のゼニガメ(Lv.14, SP530)のスクリーンショットから
+  // 画像を直接目視して登録(同じ個体の別スクロール位置)。食材アイコンは3枠とも
+  // 白いボトル+青いラベルのモーモーミルクで一致。
+  entry({
+    id: 'chat-import-zenigame-20260922',
+    speciesId: 'ゼニガメ',
+    speciesName: 'ゼニガメ',
+    level: 14,
+    nature: 'のうてんき',
+    medal: 'none',
+    caughtDate: '2026-09-22',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいスピードM' },
+      { level: 25, skill: '食材確率アップM' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: '最大所持数アップS' },
+      { level: 80, skill: 'おてつだいスピードS' },
+    ],
+    ingredients: ['モーモーミルク', 'モーモーミルク', 'モーモーミルク'],
+    specialty: 'ingredient',
+    berry: 'オレンのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
+  // 2026-09-22 チャットに貼り付けられたミュウツー(Lv.29, SP1320)のスクリーンショットから
+  // 画像を直接目視して登録。ミュウツーは種族マスタ未登録のため、タイプ(スキル)は
+  // メインスキル「サイコブレイク(きのみゾーン)」の内容からの推測(wiki未確認、要確認)。
+  // 食材はスロット2(ワカクサコーンの黄色いとうもろこし形)のみ判定でき、
+  // スロット1・3は似た色合いで判定できなかったため未入力。きのみ・性格・捕まえた日は
+  // 画面に映っていなかったため未入力。
+  entry({
+    id: 'chat-import-mewtwo-20260922',
+    speciesId: 'ミュウツー',
+    speciesName: 'ミュウツー',
+    level: 29,
+    nature: '',
+    medal: 'none',
+    caughtDate: '',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップS' },
+      { level: 25, skill: 'おてつだいスピードS' },
+      { level: 50, skill: '最大所持数アップL' },
+      { level: 70, skill: '食材確率アップS' },
+      { level: 80, skill: 'スキル確率アップM' },
+    ],
+    ingredients: ['', 'ワカクサコーン', ''],
+    specialty: 'skill',
+    berry: '',
+    adopted: true,
+    imageFileName: '',
+  }),
 ];
