@@ -176,4 +176,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: true,
     imageFileName: '',
   }),
+  // 2026-09-21 チャットに貼り付けられた2枚のポッチャマ(Lv.14, SP549)のスクリーンショットから
+  // 画像を直接目視して登録(同じ個体の別スクロール位置)。食材アイコンはリファレンス画像と
+  // 比較して判定(スロット1・3=とくせんエッグの白い卵形、スロット2=ふといながねぎの
+  // 斜めの緑ねぎ形)。出会った日が画面に表示されていたため捕まえた日として記録。
+  entry({
+    id: 'chat-import-pocchama-20260921',
+    speciesId: 'ポッチャマ',
+    speciesName: 'ポッチャマ',
+    level: 14,
+    nature: 'わんぱく',
+    medal: 'none',
+    caughtDate: '2026-09-21',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいスピードS' },
+      { level: 25, skill: 'おてつだいスピードM' },
+      { level: 50, skill: '最大所持数アップM' },
+      { level: 70, skill: '最大所持数アップL' },
+      { level: 80, skill: 'スキルレベルアップS' },
+    ],
+    ingredients: ['とくせんエッグ', 'ふといながねぎ', 'とくせんエッグ'],
+    specialty: 'berry',
+    berry: 'オレンのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
 ];
