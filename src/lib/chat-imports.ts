@@ -281,4 +281,31 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: true,
     imageFileName: '',
   }),
+  // 2026-09-24 チャットに貼り付けられた2枚のミュウツー(Lv.26, SP1295、前回登録した
+  // Lv.29個体とはSP/Lvが異なる別個体)のスクリーンショットから画像を直接目視して登録。
+  // 食材スロット1・3は前回と同じ「淡い黄褐色の房状」の見た目だが、ジンジャー(根っこ状)
+  // なのかワカクサ大豆(豆の房)なのか確信を持てず未入力のまま(前回同様)。
+  // 捕まえた日はユーザー指定により2026-09-24。
+  entry({
+    id: 'chat-import-mewtwo-2-20260924',
+    speciesId: 'ミュウツー',
+    speciesName: 'ミュウツー',
+    level: 26,
+    nature: 'のうてんき',
+    medal: 'none',
+    caughtDate: '2026-09-24',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップM' },
+      { level: 25, skill: 'おてつだいスピードS' },
+      { level: 50, skill: '最大所持数アップS' },
+      { level: 70, skill: 'おてつだいスピードM' },
+      { level: 80, skill: 'スキル確率アップS' },
+    ],
+    ingredients: ['', 'ワカクサコーン', ''],
+    specialty: 'skill',
+    berry: '',
+    adopted: true,
+    imageFileName: '',
+  }),
 ];
