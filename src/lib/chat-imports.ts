@@ -308,4 +308,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: true,
     imageFileName: '',
   }),
+  // 2026-09-23 チャットに貼り付けられた2枚のネイティ(Lv.14, SP509、既存の3個体とは
+  // SPが異なるため別個体)のスクリーンショットから画像を直接目視して登録。食材アイコンは
+  // リファレンス画像と比較して判定(スロット1・3=とくせんエッグ、スロット2=リラックスカカオ)。
+  entry({
+    id: 'chat-import-neity-d-20260923',
+    speciesId: 'ネイティ',
+    speciesName: 'ネイティ',
+    level: 14,
+    nature: 'しんちょう',
+    medal: 'none',
+    caughtDate: '2026-09-23',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'リサーチEXPボーナス' },
+      { level: 25, skill: 'スキルレベルアップS' },
+      { level: 50, skill: '睡眠EXPボーナス' },
+      { level: 70, skill: '食材確率アップS' },
+      { level: 80, skill: 'おてつだいボーナス' },
+    ],
+    ingredients: ['とくせんエッグ', 'リラックスカカオ', 'とくせんエッグ'],
+    specialty: 'berry',
+    berry: 'マゴのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
 ];
