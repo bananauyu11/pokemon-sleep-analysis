@@ -106,7 +106,9 @@ export default function PokemonListPage() {
             <thead>
               <tr className="sticky top-0 z-10 bg-brand-night text-left text-xs text-white/80">
                 <th className="whitespace-nowrap px-3 py-2 font-medium">#</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">捕まえた日</th>
                 <th className="whitespace-nowrap px-3 py-2 font-medium">名前</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">採用</th>
                 <th className="whitespace-nowrap px-3 py-2 font-medium">Lv</th>
                 <th className="whitespace-nowrap px-3 py-2 font-medium">タイプ</th>
                 <th className="whitespace-nowrap px-3 py-2 font-medium">メダル</th>
@@ -120,8 +122,6 @@ export default function PokemonListPage() {
                 <th className="whitespace-nowrap px-3 py-2 font-medium">食材2</th>
                 <th className="whitespace-nowrap px-3 py-2 font-medium">食材3</th>
                 <th className="whitespace-nowrap px-3 py-2 font-medium">性格</th>
-                <th className="whitespace-nowrap px-3 py-2 font-medium">採用</th>
-                <th className="whitespace-nowrap px-3 py-2 font-medium">捕まえた日</th>
               </tr>
             </thead>
             <tbody>
@@ -134,8 +134,14 @@ export default function PokemonListPage() {
                   }`}
                 >
                   <td className="whitespace-nowrap px-3 py-2 text-black/40">{i + 1}</td>
+                  <td className="whitespace-nowrap px-3 py-2 text-black/70">
+                    {e.caughtDate || '-'}
+                  </td>
                   <td className="whitespace-nowrap px-3 py-2 font-bold text-brand-night-dark">
                     {e.speciesName || '(名前未設定)'}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2 text-black/70">
+                    {e.adopted === false ? '未採用' : '採用'}
                   </td>
                   <td className="whitespace-nowrap px-3 py-2">{e.level}</td>
                   <td className="whitespace-nowrap px-3 py-2">
@@ -162,12 +168,6 @@ export default function PokemonListPage() {
                     </td>
                   ))}
                   <td className="whitespace-nowrap px-3 py-2 text-black/70">{e.nature || '-'}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-black/70">
-                    {e.adopted === false ? '未採用' : '採用'}
-                  </td>
-                  <td className="whitespace-nowrap px-3 py-2 text-black/70">
-                    {e.caughtDate || '-'}
-                  </td>
                 </tr>
               ))}
             </tbody>
