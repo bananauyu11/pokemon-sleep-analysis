@@ -12,8 +12,15 @@
 //
 // 誤りや今後のアップデートによる追加があれば「種族マスタ管理」画面から
 // 自由に追加・編集してください。
-export const DEFAULT_SUBSKILLS: string[] = [
-  // 金色
+export type SubSkillTier = 'gold' | 'blue' | 'white';
+
+export const SUBSKILL_TIER_LABELS: Record<SubSkillTier, string> = {
+  gold: '金',
+  blue: '青',
+  white: '白',
+};
+
+const GOLD_SUBSKILLS = [
   '睡眠EXPボーナス',
   'おてつだいボーナス',
   'げんき回復ボーナス',
@@ -21,16 +28,36 @@ export const DEFAULT_SUBSKILLS: string[] = [
   'リサーチEXPボーナス',
   'きのみの数S',
   'スキルレベルアップM',
-  // 青色
+];
+
+const BLUE_SUBSKILLS = [
   'スキルレベルアップS',
   '最大所持数アップL',
   '最大所持数アップM',
   'おてつだいスピードM',
   '食材確率アップM',
   'スキル確率アップM',
-  // 白色
+];
+
+const WHITE_SUBSKILLS = [
   '最大所持数アップS',
   'おてつだいスピードS',
   '食材確率アップS',
   'スキル確率アップS',
 ];
+
+export const DEFAULT_SUBSKILLS: string[] = [
+  ...GOLD_SUBSKILLS,
+  ...BLUE_SUBSKILLS,
+  ...WHITE_SUBSKILLS,
+];
+
+const SUBSKILL_TIER_BY_NAME: Record<string, SubSkillTier> = {};
+for (const name of GOLD_SUBSKILLS) SUBSKILL_TIER_BY_NAME[name] = 'gold';
+for (const name of BLUE_SUBSKILLS) SUBSKILL_TIER_BY_NAME[name] = 'blue';
+for (const name of WHITE_SUBSKILLS) SUBSKILL_TIER_BY_NAME[name] = 'white';
+
+/** サブスキル名からレア度(金/青/白)を返す。未知の名前ならnull。 */
+export function subSkillTierOf(name: string): SubSkillTier | null {
+  return SUBSKILL_TIER_BY_NAME[name] ?? null;
+}

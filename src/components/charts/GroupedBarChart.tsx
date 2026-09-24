@@ -4,6 +4,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Cell,
   Legend,
   ResponsiveContainer,
   Tooltip,
@@ -20,6 +21,11 @@ interface GroupedBarChartProps {
   height?: number;
   /** 'bars'(既定): カテゴリを縦に並べた横棒グラフ。'columns': カテゴリを横に並べた縦棒グラフ。 */
   orientation?: 'bars' | 'columns';
+  /**
+   * グループが1つだけのときに、カテゴリ(棒)ごとに個別の色を指定する
+   * (dataの並び順に対応、未指定の要素はgroups[0].colorを使う)。
+   */
+  cellColors?: (string | undefined)[];
 }
 
 export default function GroupedBarChart({
@@ -29,6 +35,7 @@ export default function GroupedBarChart({
   valueSuffix = '',
   height,
   orientation = 'bars',
+  cellColors,
 }: GroupedBarChartProps) {
   const isColumns = orientation === 'columns';
   const chartHeight = height ?? (isColumns ? 220 : Math.max(280, data.length * 40 + 60));
@@ -92,7 +99,13 @@ export default function GroupedBarChart({
             fill={g.color}
             radius={isColumns ? [4, 4, 0, 0] : [0, 4, 4, 0]}
             maxBarSize={isColumns ? 40 : 28}
-          />
+          >
+            {groups.length === 1 &&
+              cellColors &&
+              data.map((_, i) => (
+                <Cell key={i} fill={cellColors[i] ?? g.color} />
+              ))}
+          </Bar>
         ))}
       </BarChart>
     </ResponsiveContainer>

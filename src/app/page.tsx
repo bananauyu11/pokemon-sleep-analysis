@@ -9,6 +9,7 @@ import {
   computeAdoptionStreakStats,
   computePatternStats,
   computeSubSkillStats,
+  computeSubSkillTierStats,
   type GroupBy,
 } from '@/lib/analysis';
 import GroupedBarChart from '@/components/charts/GroupedBarChart';
@@ -21,6 +22,8 @@ import {
 } from '@/lib/types';
 
 type ValueMode = 'count' | 'percent';
+
+const TIER_COLOR: Record<string, string> = { 金: '#e5b93a', 青: '#6fa8f5', 白: '#c9cdd6' };
 
 export default function DashboardPage() {
   const entries = useEntries();
@@ -60,6 +63,19 @@ export default function DashboardPage() {
       }),
     [rows, groups, mode]
   );
+
+  const tierStats = useMemo(() => computeSubSkillTierStats(filteredEntries), [
+    filteredEntries,
+  ]);
+  const tierChartData = useMemo(
+    () =>
+      tierStats.map((t) => ({
+        label: t.label,
+        件数: mode === 'count' ? t.count : t.percent,
+      })),
+    [tierStats, mode]
+  );
+  const tierCellColors = tierStats.map((t) => TIER_COLOR[t.label]);
 
   const patternStats = useMemo(() => computePatternStats(filteredEntries), [
     filteredEntries,
@@ -197,6 +213,20 @@ export default function DashboardPage() {
           groups={groups}
           categoryKey="skill"
           valueSuffix={mode === 'percent' ? '%' : ''}
+        />
+      </div>
+
+      <div className="card p-4">
+        <h2 className="mb-3 text-sm font-bold text-brand-night-dark">
+          サブスキルのレア度別割合(金/青/白)
+        </h2>
+        <GroupedBarChart
+          data={tierChartData}
+          groups={[{ key: '件数', label: '件数', color: '#e5b93a' }]}
+          categoryKey="label"
+          cellColors={tierCellColors}
+          valueSuffix={mode === 'percent' ? '%' : ''}
+          orientation="columns"
         />
       </div>
 

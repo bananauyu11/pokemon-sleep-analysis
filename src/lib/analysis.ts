@@ -7,6 +7,7 @@ import {
   type PokemonEntry,
   type SpecialtyType,
 } from './types';
+import { SUBSKILL_TIER_LABELS, subSkillTierOf, type SubSkillTier } from './subskills';
 
 export type GroupBy = 'none' | 'medal' | 'specialty';
 
@@ -104,6 +105,39 @@ export function computeSubSkillStats(
     .sort((a, b) => b.total - a.total);
 
   return { rows, groupTotals };
+}
+
+export interface TierStatRow {
+  tier: SubSkillTier;
+  label: string;
+  count: number;
+  percent: number;
+}
+
+/**
+ * 解放済みサブスキルをレア度(金/青/白)別に集計する。
+ * 割合は「レア度が判明している解放済みサブスキル枠全体のうち、そのレア度が
+ * 占める割合」(ポケモン1匹につき最大5枠が対象、未取得の枠は対象外)。
+ */
+export function computeSubSkillTierStats(entries: PokemonEntry[]): TierStatRow[] {
+  const counts: Record<SubSkillTier, number> = { gold: 0, blue: 0, white: 0 };
+  let total = 0;
+  for (const e of entries) {
+    for (const s of e.subSkills) {
+      if (!s.skill) continue;
+      const tier = subSkillTierOf(s.skill);
+      if (!tier) continue;
+      counts[tier]++;
+      total++;
+    }
+  }
+  const order: SubSkillTier[] = ['gold', 'blue', 'white'];
+  return order.map((tier) => ({
+    tier,
+    label: SUBSKILL_TIER_LABELS[tier],
+    count: counts[tier],
+    percent: total > 0 ? Math.round((counts[tier] / total) * 1000) / 10 : 0,
+  }));
 }
 
 export interface PatternStatRow {
