@@ -56,7 +56,7 @@ export default function EntryForm({
     [entry.ingredients, matchedSpecies]
   );
 
-  // スロットごとの選択肢: 選択中のポケモン(種族マスタ)で判明している候補
+  // スロットごとの選択肢: 選択中のポケモン(ポケモンマスタ)で判明している候補
   // だけに絞り込む(食材の抽選は手前のスロットの候補も引き継ぐため、例えば
   // 3番目のスロットには1・2番目の食材も出ることがある。スロット0〜iの
   // 和集合が実際に起こり得る候補)。種族が未登録、または候補が1つも
@@ -75,7 +75,7 @@ export default function EntryForm({
       specialty: found?.specialty ?? prev.specialty,
       berry: found?.berry || prev.berry,
       // 食材はスロットごとに複数候補からランダムに決まる(個体差がある)ため、
-      // ここでは自動入力しない。種族マスタの候補はあくまで入力補助
+      // ここでは自動入力しない。ポケモンマスタの候補はあくまで入力補助
       // (オートコンプリート)として使う。
     }));
   }
@@ -131,7 +131,7 @@ export default function EntryForm({
           </datalist>
           {!matchedSpecies && entry.speciesName && (
             <p className="mt-1 text-xs text-amber-600">
-              種族マスタ未登録のため自動入力されません。タイプ・きのみ・食材は下記で手動入力してください。
+              ポケモンマスタ未登録のため自動入力されません。タイプ・きのみ・食材は下記で手動入力してください。
             </p>
           )}
         </div>
@@ -167,7 +167,7 @@ export default function EntryForm({
             ))}
           </select>
           <p className="mt-1 text-xs text-black/40">
-            種族マスタに登録済みなら名前から自動入力されます。
+            ポケモンマスタに登録済みなら名前から自動入力されます。
           </p>
         </div>
 

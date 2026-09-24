@@ -41,7 +41,7 @@ export const db = new PokeSleepDB();
 let seeded = false;
 
 /**
- * 種族マスタ・サブスキル一覧はアプリ内に編集画面を持たず、コード
+ * ポケモンマスタ・サブスキル一覧はアプリ内に編集画面を持たず、コード
  * (species-data.ts / subskills.ts)側で管理する運用のため、起動のたびに
  * 常にコード内の最新内容で上書き同期する(ユーザーの記録データ=entriesは
  * 上書き同期の対象外)。
@@ -70,7 +70,7 @@ export async function ensureSeeded(): Promise<void> {
  * 画像OCRがうまく読み取れず、チャットに貼り付けられた画像をClaudeが
  * 直接目視して登録した記録(chat-imports.ts)を反映する。
  *
- * entries はユーザー自身の記録データなので、種族マスタのように毎回
+ * entries はユーザー自身の記録データなので、ポケモンマスタのように毎回
  * 上書きはしない。代わりに、appliedImports テーブルで「どのIDを
  * 既に取り込み済みか」を記録しておき、まだ未適用のものだけを1回だけ
  * 追加する。これにより、一度追加した後にユーザーが記録一覧から削除しても
@@ -92,7 +92,7 @@ async function applyChatImports(): Promise<void> {
 /**
  * 食材配置パターン(ingredientPattern)の判定ロジックが変わった場合に、
  * 既存の記録データにも最新のロジックを反映するため、起動のたびに
- * 種族マスタの最新内容で再計算し、値が変わっていれば更新する
+ * ポケモンマスタの最新内容で再計算し、値が変わっていれば更新する
  * (食材そのものは変更しない。パターンの表示のみを最新化する)。
  */
 async function recomputeIngredientPatterns(): Promise<void> {

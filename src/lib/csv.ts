@@ -89,7 +89,7 @@ export interface CsvParseResult {
  * ポケモン記録のCSVを取り込み、PokemonEntry配列に変換する。
  * ヘッダー名は entriesToCsv が出力する形式(または相当する日本語表記)を想定。
  * `speciesList` は ingredientPattern 列が無い/不正な場合のフォールバック計算
- * (種族マスタの食材スロット候補との照合)に使う。省略時はフォールバック
+ * (ポケモンマスタの食材スロット候補との照合)に使う。省略時はフォールバック
  * 計算ができず、判定不能な場合は空文字になる。
  */
 export function parseEntriesCsv(
