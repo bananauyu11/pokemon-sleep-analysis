@@ -98,11 +98,10 @@ export default function PokemonListPage() {
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="sticky top-0 z-10 bg-brand-night text-left text-xs text-white/80">
-                <th className="whitespace-nowrap px-3 py-2 font-medium">#</th>
-                <th className="whitespace-nowrap px-3 py-2 font-medium">捕まえた日</th>
-                <th className="whitespace-nowrap px-3 py-2 font-medium">名前</th>
-                <th className="whitespace-nowrap px-3 py-2 font-medium">採用</th>
-                <th className="whitespace-nowrap px-3 py-2 font-medium"></th>
+                <th className="whitespace-nowrap px-2 py-2 font-medium">捕まえた日</th>
+                <th className="whitespace-nowrap px-2 py-2 font-medium">名前</th>
+                <th className="whitespace-nowrap px-2 py-2 font-medium">採用</th>
+                <th className="whitespace-nowrap px-2 py-2 font-medium"></th>
               </tr>
             </thead>
             <tbody>
@@ -111,19 +110,18 @@ export default function PokemonListPage() {
                   key={e.id}
                   className={`border-t border-black/5 ${i % 2 === 1 ? 'bg-black/[0.02]' : ''}`}
                 >
-                  <td className="whitespace-nowrap px-3 py-2 text-black/40">{i + 1}</td>
-                  <td className="whitespace-nowrap px-3 py-2 text-black/70">
+                  <td className="whitespace-nowrap px-2 py-2 text-black/70">
                     {e.caughtDate || '-'}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-2 font-bold text-brand-night-dark">
+                  <td className="whitespace-nowrap px-2 py-2 font-bold text-brand-night-dark">
                     {e.speciesName || '(名前未設定)'}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-2 text-black/70">
+                  <td className="whitespace-nowrap px-2 py-2 text-black/70">
                     {e.adopted === false ? '未採用' : '採用'}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-2">
+                  <td className="whitespace-nowrap px-2 py-2 text-right">
                     <button
-                      className="rounded-full bg-brand-accent/15 px-3 py-1 text-xs font-bold text-brand-accent-dark transition hover:bg-brand-accent/25"
+                      className="rounded-full bg-brand-accent/15 px-2.5 py-1 text-xs font-bold text-brand-accent-dark transition hover:bg-brand-accent/25"
                       onClick={() => router.push(`/pokemon/${e.id}`)}
                     >
                       編集
