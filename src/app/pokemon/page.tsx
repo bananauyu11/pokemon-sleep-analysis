@@ -1,25 +1,46 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useEntries } from '@/lib/hooks';
 import { MedalBadge, SpecialtyBadge } from '@/components/Badges';
-import { MEDAL_LABELS, MEDAL_ORDER, SPECIALTY_LABELS, type MedalRank, type SpecialtyType } from '@/lib/types';
+import {
+  MEDAL_LABELS,
+  MEDAL_ORDER,
+  SPECIALTY_LABELS,
+  SUBSKILL_LEVELS,
+  type MedalRank,
+  type PokemonEntry,
+  type SpecialtyType,
+} from '@/lib/types';
 import { entriesToCsv } from '@/lib/csv';
+
+function subSkillAt(entry: PokemonEntry, level: number): string {
+  return entry.subSkills.find((s) => s.level === level)?.skill ?? '';
+}
 
 export default function PokemonListPage() {
   const entries = useEntries();
+  const router = useRouter();
   const [q, setQ] = useState('');
   const [medalFilter, setMedalFilter] = useState<MedalRank | 'all'>('all');
   const [specialtyFilter, setSpecialtyFilter] = useState<SpecialtyType | 'all'>('all');
 
   const filtered = useMemo(() => {
-    return entries.filter((e) => {
-      if (medalFilter !== 'all' && e.medal !== medalFilter) return false;
-      if (specialtyFilter !== 'all' && e.specialty !== specialtyFilter) return false;
-      if (q && !e.speciesName.toLowerCase().includes(q.toLowerCase())) return false;
-      return true;
-    });
+    return entries
+      .filter((e) => {
+        if (medalFilter !== 'all' && e.medal !== medalFilter) return false;
+        if (specialtyFilter !== 'all' && e.specialty !== specialtyFilter) return false;
+        if (q && !e.speciesName.toLowerCase().includes(q.toLowerCase())) return false;
+        return true;
+      })
+      .sort((a, b) => {
+        // 捕まえた日の降順(新しい順)。未入力は末尾にまとめる。
+        if (!a.caughtDate && !b.caughtDate) return 0;
+        if (!a.caughtDate) return 1;
+        if (!b.caughtDate) return -1;
+        return b.caughtDate.localeCompare(a.caughtDate);
+      });
   }, [entries, medalFilter, specialtyFilter, q]);
 
   function handleExport() {
@@ -78,45 +99,79 @@ export default function PokemonListPage() {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="card p-8 text-center text-sm text-black/40">
-          記録がありません。
-        </p>
+        <p className="card p-8 text-center text-sm text-black/40">記録がありません。</p>
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {filtered.map((e) => (
-            <Link
-              key={e.id}
-              href={`/pokemon/${e.id}`}
-              className="card flex flex-col gap-2 p-4 transition hover:shadow-md"
-            >
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-brand-night-dark">
-                  {e.speciesName || '(名前未設定)'}
-                </span>
-                <span className="text-xs text-black/40">Lv.{e.level}</span>
-              </div>
-              <div className="flex flex-wrap gap-1.5">
-                <SpecialtyBadge specialty={e.specialty} />
-                <MedalBadge medal={e.medal} />
-                {e.ingredientPattern && (
-                  <span className="chip bg-brand-accent/15 text-brand-accent-dark">
-                    {e.ingredientPattern}
-                  </span>
-                )}
-              </div>
-              <div className="text-xs text-black/50">
-                {e.subSkills.filter((s) => s.skill).length > 0
-                  ? e.subSkills
-                      .filter((s) => s.skill)
-                      .map((s) => `Lv${s.level}:${s.skill}`)
-                      .join(' / ')
-                  : 'サブスキル未記録'}
-              </div>
-              <div className="text-xs text-black/40">
-                {e.caughtDate || '捕獲日未記録'} {e.nature && `・${e.nature}`}
-              </div>
-            </Link>
-          ))}
+        <div className="card overflow-x-auto p-0">
+          <table className="w-full min-w-[1180px] border-collapse text-sm">
+            <thead>
+              <tr className="sticky top-0 z-10 bg-brand-night text-left text-xs text-white/80">
+                <th className="whitespace-nowrap px-3 py-2 font-medium">#</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">名前</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">Lv</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">タイプ</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">メダル</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">パターン</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">Lv10</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">Lv25</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">Lv50</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">Lv70</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">Lv80</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">食材1</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">食材2</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">食材3</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">性格</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">採用</th>
+                <th className="whitespace-nowrap px-3 py-2 font-medium">捕まえた日</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((e, i) => (
+                <tr
+                  key={e.id}
+                  onClick={() => router.push(`/pokemon/${e.id}`)}
+                  className={`cursor-pointer border-t border-black/5 transition hover:bg-brand-accent/10 ${
+                    i % 2 === 1 ? 'bg-black/[0.02]' : ''
+                  }`}
+                >
+                  <td className="whitespace-nowrap px-3 py-2 text-black/40">{i + 1}</td>
+                  <td className="whitespace-nowrap px-3 py-2 font-bold text-brand-night-dark">
+                    {e.speciesName || '(名前未設定)'}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2">{e.level}</td>
+                  <td className="whitespace-nowrap px-3 py-2">
+                    <SpecialtyBadge specialty={e.specialty} />
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2">
+                    <MedalBadge medal={e.medal} />
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2">
+                    {e.ingredientPattern && (
+                      <span className="chip bg-brand-accent/15 text-brand-accent-dark">
+                        {e.ingredientPattern}
+                      </span>
+                    )}
+                  </td>
+                  {SUBSKILL_LEVELS.map((lv) => (
+                    <td key={lv} className="whitespace-nowrap px-3 py-2 text-black/70">
+                      {subSkillAt(e, lv) || '-'}
+                    </td>
+                  ))}
+                  {([0, 1, 2] as const).map((idx) => (
+                    <td key={idx} className="whitespace-nowrap px-3 py-2 text-black/70">
+                      {e.ingredients[idx] || '-'}
+                    </td>
+                  ))}
+                  <td className="whitespace-nowrap px-3 py-2 text-black/70">{e.nature || '-'}</td>
+                  <td className="whitespace-nowrap px-3 py-2 text-black/70">
+                    {e.adopted === false ? '未採用' : '採用'}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-2 text-black/70">
+                    {e.caughtDate || '-'}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
