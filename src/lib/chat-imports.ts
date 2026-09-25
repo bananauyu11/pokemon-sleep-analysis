@@ -366,4 +366,56 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: true,
     imageFileName: '',
   }),
+  // 2026-09-26 チャットに貼り付けられたミュウツー(Lv.28, SP2,112、既存の2個体とは
+  // Lv/SPが異なる別個体)のスクリーンショットから画像を直接目視して登録。
+  // 食材はスロット1・2が同じ「緑の葉付きの豆房」アイコン(ワカクサ大豆)、
+  // スロット3のみ形の異なる丸いアイコン(ほっこりポテト)だったため、
+  // スロット2も候補のうちワカクサ大豆と判断した(コーンの穂軸のような形ではなかった)。
+  entry({
+    id: 'chat-import-mewtwo-3-20260926',
+    speciesId: 'ミュウツー',
+    speciesName: 'ミュウツー',
+    level: 28,
+    nature: 'しんちょう',
+    medal: 'none',
+    caughtDate: '2026-09-26',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキル確率アップS' },
+      { level: 25, skill: 'スキルレベルアップM' },
+      { level: 50, skill: '食材確率アップM' },
+      { level: 70, skill: 'きのみの数S' },
+      { level: 80, skill: 'スキルレベルアップS' },
+    ],
+    ingredients: ['ワカクサ大豆', 'ワカクサ大豆', 'ほっこりポテト'],
+    specialty: 'skill',
+    berry: 'マゴのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
+  // 2026-09-26 チャットに貼り付けられたヒノアラシ(Lv.15, SP681、既存個体とは
+  // レベル・サブスキルが異なる別個体)のスクリーンショットから画像を直接目視して登録。
+  // 食材3スロットとも同じジンジャー根の見た目のアイコンだったため全てあったかジンジャーとした。
+  entry({
+    id: 'chat-import-hinoarashi-2-20260926',
+    speciesId: 'ヒノアラシ',
+    speciesName: 'ヒノアラシ',
+    level: 15,
+    nature: 'やんちゃ',
+    medal: 'none',
+    caughtDate: '2026-09-26',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいボーナス' },
+      { level: 25, skill: '食材確率アップS' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: '最大所持数アップM' },
+      { level: 80, skill: 'きのみの数S' },
+    ],
+    ingredients: ['あったかジンジャー', 'あったかジンジャー', 'あったかジンジャー'],
+    specialty: 'berry',
+    berry: 'ヒメリのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
 ];
