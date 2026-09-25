@@ -337,4 +337,33 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: true,
     imageFileName: '',
   }),
+  // 2026-09-25 チャットに貼り付けられたラッキー(Lv.21, SP754)のスクリーンショットから
+  // 画像を直接目視して登録。サブスキルはLv10以外ロック中(🔒)だが、ロック中スロットも
+  // 既に確定済みのスキル名がグレー表示されていたため、5枠とも読み取れた。
+  // 食材はスロット1=白い卵形のアイコン(とくせんエッグ)、スロット2・3は丸いアイコンで、
+  // 種族の候補(とくせんエッグ/ほっこりポテト/あまいミツ)のうち色味から判断して
+  // スロット2=ほっこりポテト(淡いベージュ)、スロット3=あまいミツ(やや濃い橙)としたが、
+  // アイコンが小さく確信度はやや低いため、違っていたら教えてください。
+  entry({
+    id: 'chat-import-rakkii-20260925',
+    speciesId: 'ラッキー',
+    speciesName: 'ラッキー',
+    level: 21,
+    nature: 'わんぱく',
+    medal: 'none',
+    caughtDate: '2026-09-25',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキル確率アップM' },
+      { level: 25, skill: '最大所持数アップS' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: 'スキルレベルアップS' },
+      { level: 80, skill: '食材確率アップS' },
+    ],
+    ingredients: ['とくせんエッグ', 'ほっこりポテト', 'あまいミツ'],
+    specialty: 'ingredient',
+    berry: 'キーのみ',
+    adopted: true,
+    imageFileName: '',
+  }),
 ];
