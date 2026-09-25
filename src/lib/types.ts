@@ -101,7 +101,7 @@ export function createEmptyEntry(): PokemonEntry {
     ingredientPattern: '',
     specialty: 'berry',
     berry: '',
-    adopted: true,
+    adopted: false,
     imageFileName: '',
     createdAt: now,
     updatedAt: now,
