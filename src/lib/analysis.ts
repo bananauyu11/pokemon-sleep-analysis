@@ -24,7 +24,7 @@ const MEDAL_COLOR: Record<MedalRank, string> = {
   gold: '#e5b93a',
 };
 
-const SPECIALTY_COLOR: Record<SpecialtyType, string> = {
+export const SPECIALTY_COLOR: Record<SpecialtyType, string> = {
   berry: '#ef7d7d',
   ingredient: '#6fa8f5',
   skill: '#b98af0',
@@ -257,4 +257,49 @@ export function computeAdoptionStreakStats(
     daysSinceLastAdopted: daysSinceLastAdopted > 0 ? daysSinceLastAdopted : null,
     longestGapDays,
   };
+}
+
+export interface SpecialtyCountRow {
+  specialty: SpecialtyType;
+  label: string;
+  count: number;
+}
+
+const SPECIALTY_ORDER: SpecialtyType[] = ['berry', 'ingredient', 'skill', 'all'];
+
+/**
+ * とくい分野(きのみ/食材/スキル/オール)ごとの捕まえた数を集計する。
+ * 採用状況・捕まえた日の有無を問わず、全記録が対象。
+ */
+export function computeCaughtCountsBySpecialty(entries: PokemonEntry[]): SpecialtyCountRow[] {
+  const counts: Record<SpecialtyType, number> = { berry: 0, ingredient: 0, skill: 0, all: 0 };
+  for (const e of entries) counts[e.specialty]++;
+  return SPECIALTY_ORDER.map((specialty) => ({
+    specialty,
+    label: SPECIALTY_LABELS[specialty],
+    count: counts[specialty],
+  }));
+}
+
+export interface MonthlySpecialtyCountRow {
+  label: string; // 'YYYY-MM'
+  counts: Record<SpecialtyType, number>;
+}
+
+/**
+ * 捕まえた日(caughtDate)の年月ごとに、とくい分野別の捕まえた数を集計する。
+ * 採用状況は問わないが、捕まえた日が未入力の記録は集計対象外。
+ */
+export function computeCaughtCountsByMonth(entries: PokemonEntry[]): MonthlySpecialtyCountRow[] {
+  const table = new Map<string, Record<SpecialtyType, number>>();
+  for (const e of entries) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(e.caughtDate)) continue;
+    const label = e.caughtDate.slice(0, 7);
+    const rec = table.get(label) ?? { berry: 0, ingredient: 0, skill: 0, all: 0 };
+    rec[e.specialty]++;
+    table.set(label, rec);
+  }
+  return [...table.entries()]
+    .sort((a, b) => a[0].localeCompare(b[0]))
+    .map(([label, counts]) => ({ label, counts }));
 }

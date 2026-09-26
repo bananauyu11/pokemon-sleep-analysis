@@ -4,9 +4,12 @@ import { useMemo, useState } from 'react';
 import { useEntries, useSubSkillNames } from '@/lib/hooks';
 import {
   GROUP_DEFS,
+  SPECIALTY_COLOR,
   computeAdoptionCountsByMonth,
   computeAdoptionCountsByYear,
   computeAdoptionStreakStats,
+  computeCaughtCountsByMonth,
+  computeCaughtCountsBySpecialty,
   computePatternStats,
   computeSubSkillStats,
   computeSubSkillTierStats,
@@ -34,6 +37,7 @@ export default function DashboardPage() {
   const [specialtyFilter, setSpecialtyFilter] = useState<SpecialtyType | 'all'>('all');
   const [medalFilter, setMedalFilter] = useState<MedalRank | 'all'>('all');
   const [adoptionPeriod, setAdoptionPeriod] = useState<'month' | 'year'>('month');
+  const [caughtPeriod, setCaughtPeriod] = useState<'month' | 'total'>('month');
 
   const filteredEntries = useMemo(
     () =>
@@ -107,6 +111,31 @@ export default function DashboardPage() {
   );
   const adoptionChartData =
     adoptionPeriod === 'month' ? adoptionByMonthChartData : adoptionByYearChartData;
+
+  // タイプ別の捕まえた数は「タイプで絞り込み」フィルタと組み合わせると意味が
+  // なくなるため、フィルタとは無関係に全記録(entries)を対象にする。
+  const specialtyGroups = GROUP_DEFS.specialty;
+  const caughtByMonth = useMemo(() => computeCaughtCountsByMonth(entries), [entries]);
+  const caughtByMonthChartData = useMemo(
+    () =>
+      caughtByMonth.map((r) => {
+        const row: Record<string, string | number> = { label: r.label };
+        for (const g of specialtyGroups) {
+          row[g.key] = r.counts[g.key as SpecialtyType] ?? 0;
+        }
+        return row;
+      }),
+    [caughtByMonth, specialtyGroups]
+  );
+  const caughtTotal = useMemo(() => computeCaughtCountsBySpecialty(entries), [entries]);
+  const caughtTotalChartData = useMemo(
+    () => caughtTotal.map((r) => ({ label: r.label, 件数: r.count })),
+    [caughtTotal]
+  );
+  const caughtTotalCellColors = useMemo(
+    () => caughtTotal.map((r) => SPECIALTY_COLOR[r.specialty]),
+    [caughtTotal]
+  );
 
   // フィルタとは無関係に、全記録から見た採用の間隔なので entries(全件)を使う
   const streakStats = useMemo(() => computeAdoptionStreakStats(entries), [entries]);
@@ -268,6 +297,47 @@ export default function DashboardPage() {
           orientation="columns"
         />
         <p className="text-[11px] text-black/40">※未採用・捕まえた日未入力は除く</p>
+      </div>
+
+      <div className="card flex flex-col gap-3 p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold text-brand-night-dark">タイプ別捕まえた数</h2>
+          <div className="flex rounded-full bg-black/5 p-0.5 text-sm">
+            {(['month', 'total'] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setCaughtPeriod(p)}
+                className={`rounded-full px-3 py-1 transition ${
+                  caughtPeriod === p
+                    ? 'bg-brand-accent font-medium text-brand-night-dark'
+                    : 'text-black/50'
+                }`}
+              >
+                {p === 'month' ? '月' : 'これまで'}
+              </button>
+            ))}
+          </div>
+        </div>
+        {caughtPeriod === 'month' ? (
+          <GroupedBarChart
+            data={caughtByMonthChartData}
+            groups={specialtyGroups}
+            categoryKey="label"
+            orientation="columns"
+          />
+        ) : (
+          <GroupedBarChart
+            data={caughtTotalChartData}
+            groups={[{ key: '件数', label: '件数', color: '#2f2761' }]}
+            categoryKey="label"
+            cellColors={caughtTotalCellColors}
+            orientation="columns"
+          />
+        )}
+        {caughtPeriod === 'month' && (
+          <p className="text-[11px] text-black/40">※捕まえた日未入力は除く</p>
+        )}
       </div>
     </div>
   );
