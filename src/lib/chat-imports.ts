@@ -418,4 +418,53 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: true,
     imageFileName: '',
   }),
+  // 2026-09-29 チャットに貼り付けられたアゴジムシ2匹(SP373/Lv.14としんちょう、
+  // SP408/Lv.14でずぶとい、SP・性格・サブスキルが異なる別個体)のスクリーンショットから
+  // 画像を直接目視して登録。食材はスロット1=茶色の豆クラスター(めざましコーヒー)、
+  // スロット2=マッシュルーム形(あじわいキノコ)で共通だが、スロット3の見た目が
+  // 個体ごとに異なり(1匹目=キノコ、2匹目=コーヒー豆)、それぞれの見た目通りに入力。
+  entry({
+    id: 'chat-import-agojimushi-1-20260929',
+    speciesId: 'アゴジムシ',
+    speciesName: 'アゴジムシ',
+    level: 14,
+    nature: 'しんちょう',
+    medal: 'none',
+    caughtDate: '2026-09-29',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップS' },
+      { level: 25, skill: '食材確率アップS' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: 'おてつだいスピードS' },
+      { level: 80, skill: '食材確率アップM' },
+    ],
+    ingredients: ['めざましコーヒー', 'あじわいキノコ', 'あじわいキノコ'],
+    specialty: 'ingredient',
+    berry: 'ラムのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
+  entry({
+    id: 'chat-import-agojimushi-2-20260929',
+    speciesId: 'アゴジムシ',
+    speciesName: 'アゴジムシ',
+    level: 14,
+    nature: 'ずぶとい',
+    medal: 'none',
+    caughtDate: '2026-09-29',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップS' },
+      { level: 25, skill: 'おてつだいスピードS' },
+      { level: 50, skill: '最大所持数アップM' },
+      { level: 70, skill: 'ゆめのかけらボーナス' },
+      { level: 80, skill: 'おてつだいスピードM' },
+    ],
+    ingredients: ['めざましコーヒー', 'あじわいキノコ', 'めざましコーヒー'],
+    specialty: 'ingredient',
+    berry: 'ラムのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
