@@ -467,4 +467,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-09-30 チャットに貼り付けられたカヌチャン(Lv.13, SP497)のスクリーンショットから
+  // 画像を直接目視して登録。今回は食材欄のスクリーンショットが無かったため、
+  // 食材(3スロット)は未入力のまま。分かれば教えてください。
+  entry({
+    id: 'chat-import-kanuchan-20260930',
+    speciesId: 'カヌチャン',
+    speciesName: 'カヌチャン',
+    level: 13,
+    nature: 'わんぱく',
+    medal: 'none',
+    caughtDate: '2026-09-30',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいスピードM' },
+      { level: 25, skill: '最大所持数アップL' },
+      { level: 50, skill: 'おてつだいボーナス' },
+      { level: 70, skill: '最大所持数アップS' },
+      { level: 80, skill: 'おてつだいスピードS' },
+    ],
+    ingredients: ['', '', ''],
+    specialty: 'berry',
+    berry: 'モモンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
