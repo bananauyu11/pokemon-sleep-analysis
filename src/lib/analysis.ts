@@ -293,3 +293,20 @@ export function filterByCaughtMonth(
 ): PokemonEntry[] {
   return entries.filter((e) => e.caughtDate.startsWith(monthLabel));
 }
+
+export function currentMonthLabel(today: Date = new Date()): string {
+  return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+}
+
+/** 'YYYY-MM' 形式の年月を指定した月数だけ前後にずらす。 */
+export function shiftMonthLabel(monthLabel: string, delta: number): string {
+  const [y, m] = monthLabel.split('-').map(Number);
+  const d = new Date(y, m - 1 + delta, 1);
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+}
+
+/** 'YYYY-MM' 形式の年月を「YYYY年M月」の表示用文字列に変換する。 */
+export function formatMonthLabel(monthLabel: string): string {
+  const [y, m] = monthLabel.split('-').map(Number);
+  return `${y}年${m}月`;
+}

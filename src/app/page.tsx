@@ -12,7 +12,10 @@ import {
   computePatternStats,
   computeSubSkillStats,
   computeSubSkillTierStats,
+  currentMonthLabel,
   filterByCaughtMonth,
+  formatMonthLabel,
+  shiftMonthLabel,
   type GroupBy,
 } from '@/lib/analysis';
 import GroupedBarChart from '@/components/charts/GroupedBarChart';
@@ -39,6 +42,7 @@ export default function DashboardPage() {
   const [medalFilter, setMedalFilter] = useState<MedalRank | 'all'>('all');
   const [adoptionPeriod, setAdoptionPeriod] = useState<'month' | 'year'>('month');
   const [caughtPeriod, setCaughtPeriod] = useState<'month' | 'total'>('month');
+  const [caughtMonth, setCaughtMonth] = useState<string>(() => currentMonthLabel());
 
   const filteredEntries = useMemo(
     () =>
@@ -115,21 +119,18 @@ export default function DashboardPage() {
 
   // タイプ別の捕まえた数は「タイプで絞り込み」フィルタと組み合わせると意味が
   // なくなるため、フィルタとは無関係に全記録(entries)を対象にする。
-  const currentMonthLabel = useMemo(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-  }, []);
-  const caughtThisMonth = useMemo(
-    () => computeCaughtCountsBySpecialty(filterByCaughtMonth(entries, currentMonthLabel)),
-    [entries, currentMonthLabel]
+  const isCurrentMonth = caughtMonth === currentMonthLabel();
+  const caughtForMonth = useMemo(
+    () => computeCaughtCountsBySpecialty(filterByCaughtMonth(entries, caughtMonth)),
+    [entries, caughtMonth]
   );
-  const caughtThisMonthChartData = useMemo(
-    () => caughtThisMonth.map((r) => ({ label: r.label, 件数: r.count })),
-    [caughtThisMonth]
+  const caughtForMonthChartData = useMemo(
+    () => caughtForMonth.map((r) => ({ label: r.label, 件数: r.count })),
+    [caughtForMonth]
   );
-  const caughtThisMonthCellColors = useMemo(
-    () => caughtThisMonth.map((r) => SPECIALTY_COLOR[r.specialty]),
-    [caughtThisMonth]
+  const caughtForMonthCellColors = useMemo(
+    () => caughtForMonth.map((r) => SPECIALTY_COLOR[r.specialty]),
+    [caughtForMonth]
   );
   const caughtTotal = useMemo(() => computeCaughtCountsBySpecialty(entries), [entries]);
   const caughtTotalChartData = useMemo(
@@ -318,20 +319,44 @@ export default function DashboardPage() {
                     : 'text-black/50'
                 }`}
               >
-                {p === 'month' ? '今月' : 'これまで'}
+                {p === 'month' ? '月別' : 'これまで'}
               </button>
             ))}
           </div>
         </div>
+        {caughtPeriod === 'month' && (
+          <div className="flex items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setCaughtMonth((m) => shiftMonthLabel(m, -1))}
+              className="rounded-full bg-black/5 px-2.5 py-1 text-sm text-black/60 transition hover:bg-black/10"
+              aria-label="前の月"
+            >
+              ‹
+            </button>
+            <span className="text-sm font-medium text-brand-night-dark">
+              {formatMonthLabel(caughtMonth)}
+            </span>
+            <button
+              type="button"
+              onClick={() => setCaughtMonth((m) => shiftMonthLabel(m, 1))}
+              disabled={isCurrentMonth}
+              className="rounded-full bg-black/5 px-2.5 py-1 text-sm text-black/60 transition hover:bg-black/10 disabled:opacity-30 disabled:hover:bg-black/5"
+              aria-label="次の月"
+            >
+              ›
+            </button>
+          </div>
+        )}
         <GroupedBarChart
-          data={caughtPeriod === 'month' ? caughtThisMonthChartData : caughtTotalChartData}
+          data={caughtPeriod === 'month' ? caughtForMonthChartData : caughtTotalChartData}
           groups={[{ key: '件数', label: '件数', color: '#2f2761' }]}
           categoryKey="label"
-          cellColors={caughtPeriod === 'month' ? caughtThisMonthCellColors : caughtTotalCellColors}
+          cellColors={caughtPeriod === 'month' ? caughtForMonthCellColors : caughtTotalCellColors}
           orientation="columns"
         />
         {caughtPeriod === 'month' && (
-          <p className="text-[11px] text-black/40">※{currentMonthLabel}分、捕まえた日未入力は除く</p>
+          <p className="text-[11px] text-black/40">※捕まえた日未入力は除く</p>
         )}
       </div>
     </div>
