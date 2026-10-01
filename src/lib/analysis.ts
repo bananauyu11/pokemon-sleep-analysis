@@ -265,10 +265,11 @@ export interface SpecialtyCountRow {
   count: number;
 }
 
-const SPECIALTY_ORDER: SpecialtyType[] = ['berry', 'ingredient', 'skill', 'all'];
+// 「オール」型(ミュウなどごく一部のみ)は捕まえた数チャートでは対象外とする。
+const SPECIALTY_ORDER: SpecialtyType[] = ['berry', 'ingredient', 'skill'];
 
 /**
- * とくい分野(きのみ/食材/スキル/オール)ごとの捕まえた数を集計する。
+ * とくい分野(きのみ/食材/スキル)ごとの捕まえた数を集計する。
  * 採用状況・捕まえた日の有無を問わず、全記録が対象。
  */
 export function computeCaughtCountsBySpecialty(entries: PokemonEntry[]): SpecialtyCountRow[] {
