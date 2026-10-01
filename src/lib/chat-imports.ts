@@ -492,4 +492,31 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-01 チャットに貼り付けられたカヌチャン(Lv.13, SP433、おくびょう、
+  // 既存のSP497個体とはSP・性格・サブスキルが異なる別個体)のスクリーンショットから
+  // 画像を直接目視して登録。食材はスロット1=トマト(あんみんトマト)、
+  // スロット2・3とも同じカカオ豆の見た目のアイコン(リラックスカカオ)だったため
+  // そのまま入力。
+  entry({
+    id: 'chat-import-kanuchan-2-20261001',
+    speciesId: 'カヌチャン',
+    speciesName: 'カヌチャン',
+    level: 13,
+    nature: 'おくびょう',
+    medal: 'none',
+    caughtDate: '2026-10-01',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいスピードM' },
+      { level: 25, skill: 'おてつだいスピードS' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: '最大所持数アップL' },
+      { level: 80, skill: '睡眠EXPボーナス' },
+    ],
+    ingredients: ['あんみんトマト', 'リラックスカカオ', 'リラックスカカオ'],
+    specialty: 'berry',
+    berry: 'モモンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
