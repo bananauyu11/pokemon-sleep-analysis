@@ -6,6 +6,7 @@ import { useEntries } from '@/lib/hooks';
 import {
   MEDAL_LABELS,
   MEDAL_ORDER,
+  SPECIALTY_FILTER_TYPES,
   SPECIALTY_LABELS,
   type MedalRank,
   type SpecialtyType,
@@ -83,7 +84,7 @@ export default function PokemonListPage() {
           onChange={(e) => setSpecialtyFilter(e.target.value as SpecialtyType | 'all')}
         >
           <option value="all">タイプ: すべて</option>
-          {(Object.keys(SPECIALTY_LABELS) as SpecialtyType[]).map((k) => (
+          {SPECIALTY_FILTER_TYPES.map((k) => (
             <option key={k} value={k}>
               タイプ: {SPECIALTY_LABELS[k]}
             </option>

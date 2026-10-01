@@ -19,6 +19,7 @@ import GroupedBarChart from '@/components/charts/GroupedBarChart';
 import {
   MEDAL_LABELS,
   MEDAL_ORDER,
+  SPECIALTY_FILTER_TYPES,
   SPECIALTY_LABELS,
   type MedalRank,
   type SpecialtyType,
@@ -204,7 +205,7 @@ export default function DashboardPage() {
               onChange={(e) => setSpecialtyFilter(e.target.value as SpecialtyType | 'all')}
             >
               <option value="all">すべて</option>
-              {(Object.keys(SPECIALTY_LABELS) as SpecialtyType[]).map((s) => (
+              {SPECIALTY_FILTER_TYPES.map((s) => (
                 <option key={s} value={s}>
                   {SPECIALTY_LABELS[s]}
                 </option>

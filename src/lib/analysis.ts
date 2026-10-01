@@ -38,7 +38,8 @@ export const GROUP_DEFS: Record<GroupBy, GroupDef[]> = {
     label: MEDAL_LABELS[m],
     color: MEDAL_COLOR[m],
   })),
-  specialty: (['berry', 'ingredient', 'skill', 'all'] as SpecialtyType[]).map((s) => ({
+  // 「オール」型(ミュウなどごく一部のみ)はグループ化の対象外とする。
+  specialty: (['berry', 'ingredient', 'skill'] as SpecialtyType[]).map((s) => ({
     key: s,
     label: SPECIALTY_LABELS[s],
     color: SPECIALTY_COLOR[s],

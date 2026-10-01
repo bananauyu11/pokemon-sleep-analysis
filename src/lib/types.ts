@@ -12,6 +12,9 @@ export const SPECIALTY_LABELS: Record<SpecialtyType, string> = {
   all: 'オール',
 };
 
+// 絞り込み・グループ化のUIでは「オール」型(ごく一部のみ)を選択肢に出さない。
+export const SPECIALTY_FILTER_TYPES: SpecialtyType[] = ['berry', 'ingredient', 'skill'];
+
 export type MedalRank = 'none' | 'bronze' | 'silver' | 'gold';
 
 export const MEDAL_LABELS: Record<MedalRank, string> = {
