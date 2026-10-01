@@ -8,11 +8,11 @@ import {
   computeAdoptionCountsByMonth,
   computeAdoptionCountsByYear,
   computeAdoptionStreakStats,
-  computeCaughtCountsByMonth,
   computeCaughtCountsBySpecialty,
   computePatternStats,
   computeSubSkillStats,
   computeSubSkillTierStats,
+  filterByCaughtMonth,
   type GroupBy,
 } from '@/lib/analysis';
 import GroupedBarChart from '@/components/charts/GroupedBarChart';
@@ -114,18 +114,21 @@ export default function DashboardPage() {
 
   // タイプ別の捕まえた数は「タイプで絞り込み」フィルタと組み合わせると意味が
   // なくなるため、フィルタとは無関係に全記録(entries)を対象にする。
-  const specialtyGroups = GROUP_DEFS.specialty;
-  const caughtByMonth = useMemo(() => computeCaughtCountsByMonth(entries), [entries]);
-  const caughtByMonthChartData = useMemo(
-    () =>
-      caughtByMonth.map((r) => {
-        const row: Record<string, string | number> = { label: r.label };
-        for (const g of specialtyGroups) {
-          row[g.key] = r.counts[g.key as SpecialtyType] ?? 0;
-        }
-        return row;
-      }),
-    [caughtByMonth, specialtyGroups]
+  const currentMonthLabel = useMemo(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  }, []);
+  const caughtThisMonth = useMemo(
+    () => computeCaughtCountsBySpecialty(filterByCaughtMonth(entries, currentMonthLabel)),
+    [entries, currentMonthLabel]
+  );
+  const caughtThisMonthChartData = useMemo(
+    () => caughtThisMonth.map((r) => ({ label: r.label, 件数: r.count })),
+    [caughtThisMonth]
+  );
+  const caughtThisMonthCellColors = useMemo(
+    () => caughtThisMonth.map((r) => SPECIALTY_COLOR[r.specialty]),
+    [caughtThisMonth]
   );
   const caughtTotal = useMemo(() => computeCaughtCountsBySpecialty(entries), [entries]);
   const caughtTotalChartData = useMemo(
@@ -314,29 +317,20 @@ export default function DashboardPage() {
                     : 'text-black/50'
                 }`}
               >
-                {p === 'month' ? '月' : 'これまで'}
+                {p === 'month' ? '今月' : 'これまで'}
               </button>
             ))}
           </div>
         </div>
-        {caughtPeriod === 'month' ? (
-          <GroupedBarChart
-            data={caughtByMonthChartData}
-            groups={specialtyGroups}
-            categoryKey="label"
-            orientation="columns"
-          />
-        ) : (
-          <GroupedBarChart
-            data={caughtTotalChartData}
-            groups={[{ key: '件数', label: '件数', color: '#2f2761' }]}
-            categoryKey="label"
-            cellColors={caughtTotalCellColors}
-            orientation="columns"
-          />
-        )}
+        <GroupedBarChart
+          data={caughtPeriod === 'month' ? caughtThisMonthChartData : caughtTotalChartData}
+          groups={[{ key: '件数', label: '件数', color: '#2f2761' }]}
+          categoryKey="label"
+          cellColors={caughtPeriod === 'month' ? caughtThisMonthCellColors : caughtTotalCellColors}
+          orientation="columns"
+        />
         {caughtPeriod === 'month' && (
-          <p className="text-[11px] text-black/40">※捕まえた日未入力は除く</p>
+          <p className="text-[11px] text-black/40">※{currentMonthLabel}分、捕まえた日未入力は除く</p>
         )}
       </div>
     </div>

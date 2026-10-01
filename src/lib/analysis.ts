@@ -281,25 +281,13 @@ export function computeCaughtCountsBySpecialty(entries: PokemonEntry[]): Special
   }));
 }
 
-export interface MonthlySpecialtyCountRow {
-  label: string; // 'YYYY-MM'
-  counts: Record<SpecialtyType, number>;
-}
-
 /**
- * 捕まえた日(caughtDate)の年月ごとに、とくい分野別の捕まえた数を集計する。
- * 採用状況は問わないが、捕まえた日が未入力の記録は集計対象外。
+ * 捕まえた日(caughtDate)が指定の年月('YYYY-MM')のものだけに絞り込む。
+ * 採用状況は問わないが、捕まえた日が未入力の記録は対象外。
  */
-export function computeCaughtCountsByMonth(entries: PokemonEntry[]): MonthlySpecialtyCountRow[] {
-  const table = new Map<string, Record<SpecialtyType, number>>();
-  for (const e of entries) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(e.caughtDate)) continue;
-    const label = e.caughtDate.slice(0, 7);
-    const rec = table.get(label) ?? { berry: 0, ingredient: 0, skill: 0, all: 0 };
-    rec[e.specialty]++;
-    table.set(label, rec);
-  }
-  return [...table.entries()]
-    .sort((a, b) => a[0].localeCompare(b[0]))
-    .map(([label, counts]) => ({ label, counts }));
+export function filterByCaughtMonth(
+  entries: PokemonEntry[],
+  monthLabel: string
+): PokemonEntry[] {
+  return entries.filter((e) => e.caughtDate.startsWith(monthLabel));
 }
