@@ -519,4 +519,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-02 チャットに貼り付けられたアゴジムシ(Lv.14, SP447、むじゃき、
+  // 既存の2個体とはSP・性格・サブスキルが異なる別個体)のスクリーンショットから
+  // 画像を直接目視して登録。食材はスロット1・2とも同じコーヒー豆の見た目のアイコン
+  // (めざましコーヒー)、スロット3はキノコ形のアイコン(あじわいキノコ)。
+  entry({
+    id: 'chat-import-agojimushi-3-20261002',
+    speciesId: 'アゴジムシ',
+    speciesName: 'アゴジムシ',
+    level: 14,
+    nature: 'むじゃき',
+    medal: 'none',
+    caughtDate: '2026-10-02',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'リサーチEXPボーナス' },
+      { level: 25, skill: 'スキル確率アップM' },
+      { level: 50, skill: '食材確率アップS' },
+      { level: 70, skill: 'スキルレベルアップS' },
+      { level: 80, skill: 'スキル確率アップS' },
+    ],
+    ingredients: ['めざましコーヒー', 'めざましコーヒー', 'あじわいキノコ'],
+    specialty: 'ingredient',
+    berry: 'ラムのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
