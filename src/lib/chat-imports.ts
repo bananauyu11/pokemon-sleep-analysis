@@ -545,4 +545,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-03 チャットに貼り付けられたゴース(Lv.14, SP414)のスクリーンショットから
+  // 画像を直接目視して登録。食材はスロット1・3とも同じ赤い葉の見た目のアイコン
+  // (げきからハーブ)、スロット2はキノコ形のアイコン(あじわいキノコ)。
+  entry({
+    id: 'chat-import-gasuto-20261003',
+    speciesId: 'ゴース',
+    speciesName: 'ゴース',
+    level: 14,
+    nature: 'きまぐれ',
+    medal: 'none',
+    caughtDate: '2026-10-03',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいスピードS' },
+      { level: 25, skill: '最大所持数アップM' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: 'げんき回復ボーナス' },
+      { level: 80, skill: '最大所持数アップS' },
+    ],
+    ingredients: ['げきからハーブ', 'あじわいキノコ', 'げきからハーブ'],
+    specialty: 'ingredient',
+    berry: 'ブリーのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
