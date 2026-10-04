@@ -595,4 +595,31 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-09-11 チャットに貼り付けられたマタツボミ(Lv.15, SP473)のスクリーンショットから
+  // 画像を直接目視して登録。マタツボミはポケモンマスタ未登録だったため暫定値で追加
+  // (species-data.ts参照、とくい分野・きのみ名は未確認)。
+  // 食材はスロット1=トマト(あんみんトマト)、スロット2・3とも同じポテト形のアイコン
+  // (ほっこりポテト)。
+  entry({
+    id: 'chat-import-matatsubomi-20260911',
+    speciesId: 'マタツボミ',
+    speciesName: 'マタツボミ',
+    level: 15,
+    nature: 'のんき',
+    medal: 'none',
+    caughtDate: '2026-09-11',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップL' },
+      { level: 25, skill: '食材確率アップS' },
+      { level: 50, skill: 'おてつだいボーナス' },
+      { level: 70, skill: 'おてつだいスピードS' },
+      { level: 80, skill: '最大所持数アップM' },
+    ],
+    ingredients: ['あんみんトマト', 'ほっこりポテト', 'ほっこりポテト'],
+    specialty: 'berry',
+    berry: '',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
