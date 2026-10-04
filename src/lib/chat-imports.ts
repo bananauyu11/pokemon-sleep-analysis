@@ -570,4 +570,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-04 チャットに貼り付けられたコリンク(Lv.14, SP478)のスクリーンショットから
+  // 画像を直接目視して登録。食材はスロット1=トマト(あんみんトマト)、
+  // スロット2・3とも同じ瓶の見た目のアイコン(ピュアなオイル)。
+  entry({
+    id: 'chat-import-korinku-20261004',
+    speciesId: 'コリンク',
+    speciesName: 'コリンク',
+    level: 14,
+    nature: 'ゆうかん',
+    medal: 'none',
+    caughtDate: '2026-10-04',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップM' },
+      { level: 25, skill: 'スキルレベルアップS' },
+      { level: 50, skill: 'スキル確率アップM' },
+      { level: 70, skill: '最大所持数アップL' },
+      { level: 80, skill: '最大所持数アップS' },
+    ],
+    ingredients: ['あんみんトマト', 'ピュアなオイル', 'ピュアなオイル'],
+    specialty: 'ingredient',
+    berry: 'ウブのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
