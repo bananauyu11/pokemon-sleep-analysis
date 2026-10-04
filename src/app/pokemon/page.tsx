@@ -117,7 +117,11 @@ export default function PokemonListPage() {
                   <td className="whitespace-nowrap px-2 py-2 font-bold text-brand-night-dark">
                     {e.speciesName || '(名前未設定)'}
                   </td>
-                  <td className="whitespace-nowrap px-2 py-2 text-black/70">
+                  <td
+                    className={`whitespace-nowrap px-2 py-2 ${
+                      e.adopted === false ? 'text-black/70' : 'font-bold text-red-600'
+                    }`}
+                  >
                     {e.adopted === false ? '未採用' : '採用'}
                   </td>
                   <td className="whitespace-nowrap px-2 py-2 text-right">
