@@ -622,4 +622,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-05 チャットに貼り付けられたカヌチャン(Lv.14, SP511、さみしがり、
+  // 既存の2個体とはSP・性格・サブスキルが異なる別個体)のスクリーンショットから
+  // 画像を直接目視して登録。食材はスロット1・3とも同じトマトの見た目のアイコン
+  // (あんみんトマト)、スロット2はカカオ豆の見た目のアイコン(リラックスカカオ)。
+  entry({
+    id: 'chat-import-kanuchan-3-20261005',
+    speciesId: 'カヌチャン',
+    speciesName: 'カヌチャン',
+    level: 14,
+    nature: 'さみしがり',
+    medal: 'none',
+    caughtDate: '2026-10-05',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'げんき回復ボーナス' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: 'スキルレベルアップM' },
+      { level: 70, skill: 'リサーチEXPボーナス' },
+      { level: 80, skill: 'スキルレベルアップS' },
+    ],
+    ingredients: ['あんみんトマト', 'リラックスカカオ', 'あんみんトマト'],
+    specialty: 'berry',
+    berry: 'モモンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
