@@ -648,4 +648,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-06 チャットに貼り付けられたクワッス(Lv.14, SP498)のスクリーンショットから
+  // 画像を直接目視して登録。食材はスロット1=豆房の見た目のアイコン(ワカクサ大豆)、
+  // スロット2・3とも同じ長ねぎの見た目のアイコン(ふといながねぎ)。
+  entry({
+    id: 'chat-import-kuwassu-20261006',
+    speciesId: 'クワッス',
+    speciesName: 'クワッス',
+    level: 14,
+    nature: 'すなお',
+    medal: 'none',
+    caughtDate: '2026-10-06',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップM' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: 'おてつだいスピードS' },
+      { level: 70, skill: 'スキル確率アップM' },
+      { level: 80, skill: '睡眠EXPボーナス' },
+    ],
+    ingredients: ['ワカクサ大豆', 'ふといながねぎ', 'ふといながねぎ'],
+    specialty: 'ingredient',
+    berry: 'オレンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
