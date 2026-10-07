@@ -673,4 +673,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-07 チャットに貼り付けられたタマゲタケ(Lv.13, SP396)のスクリーンショットから
+  // 画像を直接目視して登録。食材は3スロットとも同じキノコの見た目のアイコン
+  // (あじわいキノコ)。
+  entry({
+    id: 'chat-import-tamagetake-20261007',
+    speciesId: 'タマゲタケ',
+    speciesName: 'タマゲタケ',
+    level: 13,
+    nature: 'ひかえめ',
+    medal: 'none',
+    caughtDate: '2026-10-07',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップS' },
+      { level: 25, skill: 'スキル確率アップM' },
+      { level: 50, skill: '食材確率アップS' },
+      { level: 70, skill: '最大所持数アップL' },
+      { level: 80, skill: 'おてつだいスピードS' },
+    ],
+    ingredients: ['あじわいキノコ', 'あじわいキノコ', 'あじわいキノコ'],
+    specialty: 'ingredient',
+    berry: 'カゴのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
