@@ -698,4 +698,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-08 チャットに貼り付けられたユキカブリ(Lv.13, SP349)のスクリーンショットから
+  // 画像を直接目視して登録。食材はスロット1・3とも同じトマトの見た目のアイコン
+  // (あんみんトマト)、スロット2は卵形のアイコン(とくせんエッグ)。
+  entry({
+    id: 'chat-import-yukikaburi-20261008',
+    speciesId: 'ユキカブリ',
+    speciesName: 'ユキカブリ',
+    level: 13,
+    nature: 'しんちょう',
+    medal: 'none',
+    caughtDate: '2026-10-08',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキル確率アップS' },
+      { level: 25, skill: '最大所持数アップL' },
+      { level: 50, skill: 'スキルレベルアップS' },
+      { level: 70, skill: '食材確率アップM' },
+      { level: 80, skill: '食材確率アップS' },
+    ],
+    ingredients: ['あんみんトマト', 'とくせんエッグ', 'あんみんトマト'],
+    specialty: 'ingredient',
+    berry: 'チーゴのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
