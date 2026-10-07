@@ -10,7 +10,7 @@ import type { PokemonEntry } from './types';
  * ここに追加したエントリは、アプリ起動時に一度だけ(まだ登録されていなければ)
  * db.entries に自動追加される(src/lib/db.ts の applyChatImports 参照)。
  * 一度追加された後にユーザーが削除しても、appliedImports テーブルに
- * 適用済み記録が残るため再度追加されることはない。
+ * 適用済み記録が残るため再度追加されることはない(ID単位で管理)。
  *
  * id は固定値にすること(重複登録防止のキーになるため)。
  */
