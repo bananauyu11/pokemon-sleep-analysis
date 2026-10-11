@@ -43,6 +43,7 @@ export default function DashboardPage() {
   const [specialtyFilter, setSpecialtyFilter] = useState<SpecialtyType | 'all'>('all');
   const [medalFilter, setMedalFilter] = useState<MedalRank | 'all'>('all');
   const [adoptionPeriod, setAdoptionPeriod] = useState<'month' | 'year'>('month');
+  const [caughtTrendPeriod, setCaughtTrendPeriod] = useState<'month' | 'year'>('month');
   const [caughtPeriod, setCaughtPeriod] = useState<'month' | 'total'>('month');
   const [caughtMonth, setCaughtMonth] = useState<string>(() => currentMonthLabel());
 
@@ -148,6 +149,31 @@ export default function DashboardPage() {
   );
   const adoptionChartData =
     adoptionPeriod === 'month' ? adoptionByMonthChartData : adoptionByYearChartData;
+
+  const caughtTrendMonthChartData = useMemo(
+    () =>
+      caughtByMonthTotal.map((r) => {
+        const percent =
+          filteredEntries.length > 0
+            ? Math.round((r.count / filteredEntries.length) * 1000) / 10
+            : 0;
+        return { label: r.label, 件数: r.count, 件数Percent: percent };
+      }),
+    [caughtByMonthTotal, filteredEntries.length]
+  );
+  const caughtTrendYearChartData = useMemo(
+    () =>
+      caughtByYear.map((r) => {
+        const percent =
+          filteredEntries.length > 0
+            ? Math.round((r.count / filteredEntries.length) * 1000) / 10
+            : 0;
+        return { label: r.label, 件数: r.count, 件数Percent: percent };
+      }),
+    [caughtByYear, filteredEntries.length]
+  );
+  const caughtTrendChartData =
+    caughtTrendPeriod === 'month' ? caughtTrendMonthChartData : caughtTrendYearChartData;
 
   // タイプ別の捕まえた数は「タイプで絞り込み」フィルタと組み合わせると意味が
   // なくなるため、フィルタとは無関係に全記録(entries)を対象にする。
@@ -309,6 +335,37 @@ export default function DashboardPage() {
           valueSuffix={mode === 'percent' ? '%' : ''}
           orientation="columns"
         />
+      </div>
+
+      <div className="card flex flex-col gap-3 p-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-bold text-brand-night-dark">捕まえた数の推移</h2>
+          <div className="flex rounded-full bg-black/5 p-0.5 text-sm">
+            {(['month', 'year'] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setCaughtTrendPeriod(p)}
+                className={`rounded-full px-3 py-1 transition ${
+                  caughtTrendPeriod === p
+                    ? 'bg-brand-accent font-medium text-brand-night-dark'
+                    : 'text-black/50'
+                }`}
+              >
+                {p === 'month' ? '月' : '年'}
+              </button>
+            ))}
+          </div>
+        </div>
+        <GroupedBarChart
+          data={caughtTrendChartData}
+          groups={[{ key: '件数', label: '件数', color: '#2f2761' }]}
+          categoryKey="label"
+          orientation="columns"
+        />
+        <p className="text-[11px] text-black/40">
+          ※採用・未採用問わず全記録が対象。捕まえた日未入力は除く。タップすると合計に対する割合(%)も表示されます。
+        </p>
       </div>
 
       <div className="card flex flex-col gap-3 p-4">
