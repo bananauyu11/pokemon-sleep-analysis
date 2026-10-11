@@ -89,7 +89,14 @@ export default function GroupedBarChart({
             />
           </>
         )}
-        <Tooltip formatter={(value) => `${value}${valueSuffix}`} />
+        <Tooltip
+          formatter={(value, _name, props) => {
+            const text = `${value}${valueSuffix}`;
+            const percentKey = `${String(props.dataKey)}Percent`;
+            const percent = (props.payload as Record<string, unknown> | undefined)?.[percentKey];
+            return typeof percent === 'number' ? `${text} (${percent}%)` : text;
+          }}
+        />
         {groups.length > 1 && <Legend />}
         {groups.map((g) => (
           <Bar

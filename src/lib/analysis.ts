@@ -168,17 +168,27 @@ export interface DateCountRow {
   count: number;
 }
 
+function yearLabelOf(caughtDate: string): string | null {
+  return /^\d{4}-\d{2}-\d{2}$/.test(caughtDate) ? caughtDate.slice(0, 4) : null;
+}
+
+function monthLabelOf(caughtDate: string): string | null {
+  return /^\d{4}-\d{2}-\d{2}$/.test(caughtDate) ? caughtDate.slice(0, 7) : null;
+}
+
 /**
- * 採用(博士に送っていない)ポケモンの件数を、捕まえた日(caughtDate)の
- * 年/年月ごとに集計する。捕まえた日が未入力の記録は集計対象外。
+ * 捕まえた日(caughtDate)の年/年月ごとに件数を集計する。
+ * predicate を指定すると、その条件を満たす記録のみを対象にする
+ * (例: 採用済みのみ)。捕まえた日が未入力の記録は集計対象外。
  */
-function computeAdoptionCounts(
+function computeCountsByLabel(
   entries: PokemonEntry[],
-  labelOf: (caughtDate: string) => string | null
+  labelOf: (caughtDate: string) => string | null,
+  predicate: (e: PokemonEntry) => boolean = () => true
 ): DateCountRow[] {
   const counts = new Map<string, number>();
   for (const e of entries) {
-    if (!isAdopted(e)) continue;
+    if (!predicate(e)) continue;
     const label = labelOf(e.caughtDate);
     if (!label) continue;
     counts.set(label, (counts.get(label) ?? 0) + 1);
@@ -189,15 +199,24 @@ function computeAdoptionCounts(
 }
 
 export function computeAdoptionCountsByYear(entries: PokemonEntry[]): DateCountRow[] {
-  return computeAdoptionCounts(entries, (caughtDate) =>
-    /^\d{4}-\d{2}-\d{2}$/.test(caughtDate) ? caughtDate.slice(0, 4) : null
-  );
+  return computeCountsByLabel(entries, yearLabelOf, isAdopted);
 }
 
 export function computeAdoptionCountsByMonth(entries: PokemonEntry[]): DateCountRow[] {
-  return computeAdoptionCounts(entries, (caughtDate) =>
-    /^\d{4}-\d{2}-\d{2}$/.test(caughtDate) ? caughtDate.slice(0, 7) : null
-  );
+  return computeCountsByLabel(entries, monthLabelOf, isAdopted);
+}
+
+/**
+ * 採用状況を問わず、捕まえた日の年/年月ごとに捕まえた総数を集計する。
+ * 採用件数チャートで「その期間に捕まえたうち何%を採用したか」を
+ * 計算する際の分母に使う。
+ */
+export function computeCaughtCountsByYear(entries: PokemonEntry[]): DateCountRow[] {
+  return computeCountsByLabel(entries, yearLabelOf);
+}
+
+export function computeCaughtCountsByMonthTotal(entries: PokemonEntry[]): DateCountRow[] {
+  return computeCountsByLabel(entries, monthLabelOf);
 }
 
 // これまでの最長記録の初期値。アプリで記録を取り始める前からの

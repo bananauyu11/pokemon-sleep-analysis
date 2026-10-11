@@ -8,7 +8,9 @@ import {
   computeAdoptionCountsByMonth,
   computeAdoptionCountsByYear,
   computeAdoptionStreakStats,
+  computeCaughtCountsByMonthTotal,
   computeCaughtCountsBySpecialty,
+  computeCaughtCountsByYear,
   computePatternStats,
   computeSubSkillStats,
   computeSubSkillTierStats,
@@ -67,6 +69,9 @@ export default function DashboardPage() {
         const row: Record<string, string | number> = { skill: r.skill };
         for (const g of groups) {
           row[g.key] = mode === 'count' ? r.counts[g.key] ?? 0 : r.percents[g.key] ?? 0;
+          // 表示モードが「回数」のときは、ツールチップでグループ内の
+          // 割合(%)も併せて確認できるようにする。
+          if (mode === 'count') row[`${g.key}Percent`] = r.percents[g.key] ?? 0;
         }
         return row;
       }),
@@ -94,6 +99,7 @@ export default function DashboardPage() {
       patternStats.map((p) => ({
         pattern: p.pattern,
         件数: mode === 'count' ? p.count : p.percent,
+        ...(mode === 'count' ? { 件数Percent: p.percent } : {}),
       })),
     [patternStats, mode]
   );
@@ -102,17 +108,43 @@ export default function DashboardPage() {
     () => computeAdoptionCountsByYear(filteredEntries),
     [filteredEntries]
   );
+  const caughtByYear = useMemo(
+    () => computeCaughtCountsByYear(filteredEntries),
+    [filteredEntries]
+  );
+  const caughtByYearMap = useMemo(
+    () => new Map(caughtByYear.map((r) => [r.label, r.count])),
+    [caughtByYear]
+  );
   const adoptionByYearChartData = useMemo(
-    () => adoptionByYear.map((r) => ({ label: r.label, 件数: r.count })),
-    [adoptionByYear]
+    () =>
+      adoptionByYear.map((r) => {
+        const total = caughtByYearMap.get(r.label) ?? 0;
+        const percent = total > 0 ? Math.round((r.count / total) * 1000) / 10 : 0;
+        return { label: r.label, 件数: r.count, 件数Percent: percent };
+      }),
+    [adoptionByYear, caughtByYearMap]
   );
   const adoptionByMonth = useMemo(
     () => computeAdoptionCountsByMonth(filteredEntries),
     [filteredEntries]
   );
+  const caughtByMonthTotal = useMemo(
+    () => computeCaughtCountsByMonthTotal(filteredEntries),
+    [filteredEntries]
+  );
+  const caughtByMonthTotalMap = useMemo(
+    () => new Map(caughtByMonthTotal.map((r) => [r.label, r.count])),
+    [caughtByMonthTotal]
+  );
   const adoptionByMonthChartData = useMemo(
-    () => adoptionByMonth.map((r) => ({ label: r.label, 件数: r.count })),
-    [adoptionByMonth]
+    () =>
+      adoptionByMonth.map((r) => {
+        const total = caughtByMonthTotalMap.get(r.label) ?? 0;
+        const percent = total > 0 ? Math.round((r.count / total) * 1000) / 10 : 0;
+        return { label: r.label, 件数: r.count, 件数Percent: percent };
+      }),
+    [adoptionByMonth, caughtByMonthTotalMap]
   );
   const adoptionChartData =
     adoptionPeriod === 'month' ? adoptionByMonthChartData : adoptionByYearChartData;
@@ -156,6 +188,10 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap gap-3">
+        <div className="card flex flex-1 min-w-[140px] flex-col gap-1 p-3">
+          <span className="text-xs text-black/40">捕まえた数</span>
+          <span className="text-lg font-bold text-brand-night-dark">{entries.length}匹</span>
+        </div>
         {streakStats.daysSinceLastAdopted !== null && (
           <div className="card flex flex-1 min-w-[140px] flex-col gap-1 p-3">
             <span className="text-xs text-black/40">前回の採用から</span>
@@ -301,7 +337,9 @@ export default function DashboardPage() {
           categoryKey="label"
           orientation="columns"
         />
-        <p className="text-[11px] text-black/40">※未採用・捕まえた日未入力は除く</p>
+        <p className="text-[11px] text-black/40">
+          ※未採用・捕まえた日未入力は除く。タップするとその期間に捕まえたうちの採用割合(%)も表示されます。
+        </p>
       </div>
 
       <div className="card flex flex-col gap-3 p-4">
