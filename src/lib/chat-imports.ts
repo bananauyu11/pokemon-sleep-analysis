@@ -774,4 +774,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-11 チャットに貼り付けられたピンプク(Lv.13, SP397、のうてんき、
+  // 既存の2個体とはSP・性格・サブスキルが異なる別個体)のスクリーンショットから
+  // 画像を直接目視して登録。食材はスロット1=卵形のアイコン(とくせんエッグ)、
+  // スロット2・3とも同じポテト形のアイコン(ほっこりポテト)。
+  entry({
+    id: 'chat-import-pinpuku-3-20261011',
+    speciesId: 'ピンプク',
+    speciesName: 'ピンプク',
+    level: 13,
+    nature: 'のうてんき',
+    medal: 'none',
+    caughtDate: '2026-10-11',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップM' },
+      { level: 25, skill: 'スキル確率アップM' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: '最大所持数アップL' },
+      { level: 80, skill: 'おてつだいスピードM' },
+    ],
+    ingredients: ['とくせんエッグ', 'ほっこりポテト', 'ほっこりポテト'],
+    specialty: 'ingredient',
+    berry: 'キーのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
