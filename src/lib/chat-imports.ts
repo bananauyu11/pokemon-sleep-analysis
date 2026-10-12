@@ -800,4 +800,55 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-12 チャットに貼り付けられたピンプク2匹(SP363/Lv.14でがんばりや、
+  // SP372/Lv.13でせっかち、SP・性格・サブスキルが異なる別個体)のスクリーンショットから
+  // 画像を直接目視して登録。
+  entry({
+    id: 'chat-import-pinpuku-4-20261012',
+    speciesId: 'ピンプク',
+    speciesName: 'ピンプク',
+    level: 14,
+    nature: 'がんばりや',
+    medal: 'none',
+    caughtDate: '2026-10-12',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップS' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: 'おてつだいスピードS' },
+      { level: 70, skill: 'スキルレベルアップS' },
+      { level: 80, skill: '最大所持数アップS' },
+    ],
+    // 食材はスロット1・2とも同じ卵形のアイコン(とくせんエッグ)、
+    // スロット3はポテト形のアイコン(ほっこりポテト)。
+    ingredients: ['とくせんエッグ', 'とくせんエッグ', 'ほっこりポテト'],
+    specialty: 'ingredient',
+    berry: 'キーのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
+  entry({
+    id: 'chat-import-pinpuku-5-20261012',
+    speciesId: 'ピンプク',
+    speciesName: 'ピンプク',
+    level: 13,
+    nature: 'せっかち',
+    medal: 'none',
+    caughtDate: '2026-10-12',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'げんき回復ボーナス' },
+      { level: 25, skill: '食材確率アップS' },
+      { level: 50, skill: 'おてつだいスピードS' },
+      { level: 70, skill: 'スキルレベルアップS' },
+      { level: 80, skill: '食材確率アップM' },
+    ],
+    // 食材はスロット1=卵形(とくせんエッグ)、スロット2=ポテト形(ほっこりポテト)、
+    // スロット3=蜜壷の形のアイコン(あまいミツ)。
+    ingredients: ['とくせんエッグ', 'ほっこりポテト', 'あまいミツ'],
+    specialty: 'ingredient',
+    berry: 'キーのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
