@@ -877,4 +877,52 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-14 チャットに貼り付けられたナックラー2匹(SP479/Lv.15でうっかりや、
+  // SP413/Lv.14でせっかち、SP・性格・サブスキルが異なる別個体)のスクリーンショットから
+  // 画像を直接目視して登録。食材はどちらもスロット1・3が同じアボカド形のアイコン
+  // (つやつやアボカド)、スロット2が赤い葉の見た目のアイコン(げきからハーブ)。
+  entry({
+    id: 'chat-import-nakkuraa-20261014',
+    speciesId: 'ナックラー',
+    speciesName: 'ナックラー',
+    level: 15,
+    nature: 'うっかりや',
+    medal: 'none',
+    caughtDate: '2026-10-14',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップM' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: '睡眠EXPボーナス' },
+      { level: 70, skill: 'げんき回復ボーナス' },
+      { level: 80, skill: 'きのみの数S' },
+    ],
+    ingredients: ['つやつやアボカド', 'げきからハーブ', 'つやつやアボカド'],
+    specialty: 'ingredient',
+    berry: 'フィラのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
+  entry({
+    id: 'chat-import-nakkuraa-2-20261014',
+    speciesId: 'ナックラー',
+    speciesName: 'ナックラー',
+    level: 14,
+    nature: 'せっかち',
+    medal: 'none',
+    caughtDate: '2026-10-14',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'リサーチEXPボーナス' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: '最大所持数アップS' },
+      { level: 70, skill: '食材確率アップS' },
+      { level: 80, skill: 'おてつだいスピードM' },
+    ],
+    ingredients: ['つやつやアボカド', 'げきからハーブ', 'つやつやアボカド'],
+    specialty: 'ingredient',
+    berry: 'フィラのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
