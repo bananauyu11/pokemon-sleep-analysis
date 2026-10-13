@@ -851,4 +851,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-13 チャットに貼り付けられたヨーギラス(Lv.14, SP443、既存個体とは
+  // レベル・サブスキルが異なる別個体)のスクリーンショットから画像を直接目視して登録。
+  // 食材はスロット1・3とも同じジンジャーの根っこ状のアイコン(あったかジンジャー)、
+  // スロット2は豆房状のアイコン(ワカクサ大豆)。
+  entry({
+    id: 'chat-import-yogirasu-2-20261013',
+    speciesId: 'ヨーギラス',
+    speciesName: 'ヨーギラス',
+    level: 14,
+    nature: 'さみしがり',
+    medal: 'none',
+    caughtDate: '2026-10-13',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップS' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: 'げんき回復ボーナス' },
+      { level: 70, skill: 'リサーチEXPボーナス' },
+      { level: 80, skill: '最大所持数アップM' },
+    ],
+    ingredients: ['あったかジンジャー', 'ワカクサ大豆', 'あったかジンジャー'],
+    specialty: 'ingredient',
+    berry: 'オボンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
