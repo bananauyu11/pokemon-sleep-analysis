@@ -925,4 +925,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-17 チャットに貼り付けられたミズゴロウ(Lv.14, SP489)のスクリーンショットから
+  // 画像を直接目視して登録。出会ったフィールドはトープ洞窟。食材はスロット1が
+  // ワカクサコーン、スロット2がモーモーミルク、スロット3があじわいキノコ。
+  entry({
+    id: 'chat-import-mizugorou-20261017',
+    speciesId: 'ミズゴロウ',
+    speciesName: 'ミズゴロウ',
+    level: 14,
+    nature: 'おだやか',
+    medal: 'none',
+    caughtDate: '2026-10-17',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいスピードS' },
+      { level: 25, skill: '最大所持数アップL' },
+      { level: 50, skill: 'スキルレベルアップS' },
+      { level: 70, skill: '最大所持数アップM' },
+      { level: 80, skill: '最大所持数アップS' },
+    ],
+    ingredients: ['ワカクサコーン', 'モーモーミルク', 'あじわいキノコ'],
+    specialty: 'berry',
+    berry: 'オレンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
