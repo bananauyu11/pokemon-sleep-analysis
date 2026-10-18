@@ -997,4 +997,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-19 チャットに貼り付けられたヨーギラス(Lv.13, SP494, おだやか)の
+  // スクリーンショットから画像を直接目視して登録。食材はスロット1・2が
+  // あったかジンジャー、スロット3がマメミート。
+  entry({
+    id: 'chat-import-yoogirasu-20261019',
+    speciesId: 'ヨーギラス',
+    speciesName: 'ヨーギラス',
+    level: 13,
+    nature: 'おだやか',
+    medal: 'none',
+    caughtDate: '2026-10-19',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'きのみの数S' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: '食材確率アップM' },
+      { level: 70, skill: '最大所持数アップS' },
+      { level: 80, skill: '睡眠EXPボーナス' },
+    ],
+    ingredients: ['あったかジンジャー', 'あったかジンジャー', 'マメミート'],
+    specialty: 'ingredient',
+    berry: 'オボンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
