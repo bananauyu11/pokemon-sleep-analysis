@@ -1022,4 +1022,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-20 チャットに貼り付けられたコリンク(Lv.13, SP397, おとなしい)の
+  // スクリーンショットから画像を直接目視して登録。出会ったフィールドはゴールド旧発電所。
+  // 食材はスロット1があんみんトマト、スロット2・3がピュアなオイル。
+  entry({
+    id: 'chat-import-korinku-20261020',
+    speciesId: 'コリンク',
+    speciesName: 'コリンク',
+    level: 13,
+    nature: 'おとなしい',
+    medal: 'none',
+    caughtDate: '2026-10-20',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップM' },
+      { level: 25, skill: 'おてつだいスピードM' },
+      { level: 50, skill: '食材確率アップM' },
+      { level: 70, skill: 'スキル確率アップM' },
+      { level: 80, skill: 'スキルレベルアップS' },
+    ],
+    ingredients: ['あんみんトマト', 'ピュアなオイル', 'ピュアなオイル'],
+    specialty: 'ingredient',
+    berry: 'ウブのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
