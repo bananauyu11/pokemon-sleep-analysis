@@ -1047,4 +1047,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-21 チャットに貼り付けられたコリンク(Lv.13, SP407, うっかりや)の
+  // スクリーンショットから画像を直接目視して登録。SP397の個体とは別個体。
+  // 出会ったフィールドはゴールド旧発電所。食材はスロット1があんみんトマト、
+  // スロット2がピュアなオイル、スロット3が豆粒の見た目のアイコン(めざましコーヒー)。
+  entry({
+    id: 'chat-import-korinku-20261021',
+    speciesId: 'コリンク',
+    speciesName: 'コリンク',
+    level: 13,
+    nature: 'うっかりや',
+    medal: 'none',
+    caughtDate: '2026-10-21',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキルレベルアップS' },
+      { level: 25, skill: 'きのみの数S' },
+      { level: 50, skill: '最大所持数アップM' },
+      { level: 70, skill: '最大所持数アップL' },
+      { level: 80, skill: 'おてつだいスピードS' },
+    ],
+    ingredients: ['あんみんトマト', 'ピュアなオイル', 'めざましコーヒー'],
+    specialty: 'ingredient',
+    berry: 'ウブのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
