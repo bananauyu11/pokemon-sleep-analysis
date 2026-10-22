@@ -1073,4 +1073,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-23 チャットに貼り付けられたアゴジムシ(Lv.14, SP492, むじゃき)の
+  // スクリーンショットから画像を直接目視して登録。出会ったフィールドはゴールド旧発電所。
+  // 食材は3スロットとも豆粒の見た目のアイコン(めざましコーヒー)。
+  entry({
+    id: 'chat-import-agojimushi-20261023',
+    speciesId: 'アゴジムシ',
+    speciesName: 'アゴジムシ',
+    level: 14,
+    nature: 'むじゃき',
+    medal: 'none',
+    caughtDate: '2026-10-23',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'きのみの数S' },
+      { level: 25, skill: '睡眠EXPボーナス' },
+      { level: 50, skill: '最大所持数アップM' },
+      { level: 70, skill: 'おてつだいスピードS' },
+      { level: 80, skill: 'スキルレベルアップS' },
+    ],
+    ingredients: ['めざましコーヒー', 'めざましコーヒー', 'めざましコーヒー'],
+    specialty: 'ingredient',
+    berry: 'ラムのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
