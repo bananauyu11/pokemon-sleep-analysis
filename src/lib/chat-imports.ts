@@ -1098,4 +1098,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-23 チャットに貼り付けられたバケッチャ(Lv.14, SP454, うっかりや)の
+  // スクリーンショットから画像を直接目視して登録。サイズはユーザー申告で「大きいやつ」
+  // のためおおだまとした。出会ったフィールドはゴールド旧発電所。食材は3スロットとも
+  // ずっしりカボチャ。
+  entry({
+    id: 'chat-import-bakeccha-20261023',
+    speciesId: 'バケッチャ(おおだま)',
+    speciesName: 'バケッチャ(おおだま)',
+    level: 14,
+    nature: 'うっかりや',
+    medal: 'none',
+    caughtDate: '2026-10-23',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップS' },
+      { level: 25, skill: '食材確率アップS' },
+      { level: 50, skill: 'おてつだいスピードS' },
+      { level: 70, skill: 'スキルレベルアップS' },
+      { level: 80, skill: 'おてつだいスピードM' },
+    ],
+    ingredients: ['ずっしりカボチャ', 'ずっしりカボチャ', 'ずっしりカボチャ'],
+    specialty: 'ingredient',
+    berry: 'ブリーのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
