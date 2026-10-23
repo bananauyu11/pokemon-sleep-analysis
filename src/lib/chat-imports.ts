@@ -1124,4 +1124,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-24 チャットに貼り付けられたコリンク(Lv.15, SP419, いじっぱり)の
+  // スクリーンショットから画像を直接目視して登録。SP397・SP407の個体とは別個体。
+  // 出会ったフィールドはゴールド旧発電所。食材はスロット1・3があんみんトマト、
+  // スロット2がピュアなオイル。
+  entry({
+    id: 'chat-import-korinku-20261024',
+    speciesId: 'コリンク',
+    speciesName: 'コリンク',
+    level: 15,
+    nature: 'いじっぱり',
+    medal: 'none',
+    caughtDate: '2026-10-24',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいスピードS' },
+      { level: 25, skill: 'スキルレベルアップS' },
+      { level: 50, skill: '最大所持数アップL' },
+      { level: 70, skill: 'スキル確率アップM' },
+      { level: 80, skill: 'ゆめのかけらボーナス' },
+    ],
+    ingredients: ['あんみんトマト', 'ピュアなオイル', 'あんみんトマト'],
+    specialty: 'ingredient',
+    berry: 'ウブのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
