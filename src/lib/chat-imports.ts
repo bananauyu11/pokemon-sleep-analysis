@@ -1175,4 +1175,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-26 チャットに貼り付けられたデデンネ(Lv.22, SP747, きまぐれ)の
+  // スクリーンショットから画像を直接目視して登録。出会ったフィールドはゴールド旧発電所。
+  // 食材はスロット1・3がとくせんリンゴ、スロット2がリラックスカカオ。
+  entry({
+    id: 'chat-import-dedenne-20261026',
+    speciesId: 'デデンネ',
+    speciesName: 'デデンネ',
+    level: 22,
+    nature: 'きまぐれ',
+    medal: 'none',
+    caughtDate: '2026-10-26',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップM' },
+      { level: 25, skill: 'スキルレベルアップS' },
+      { level: 50, skill: 'スキル確率アップM' },
+      { level: 70, skill: '最大所持数アップL' },
+      { level: 80, skill: 'おてつだいスピードM' },
+    ],
+    ingredients: ['とくせんリンゴ', 'リラックスカカオ', 'とくせんリンゴ'],
+    specialty: 'skill',
+    berry: 'ウブのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
