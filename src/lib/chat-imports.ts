@@ -1200,4 +1200,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-28 チャットに貼り付けられたヨーギラス(Lv.14, SP530, のんき)の
+  // スクリーンショットから画像を直接目視して登録。出会ったフィールドはワカクサ本島。
+  // 食材はスロット1があったかジンジャー、スロット2がワカクサ大豆、スロット3がマメミート。
+  entry({
+    id: 'chat-import-yoogirasu-20261028',
+    speciesId: 'ヨーギラス',
+    speciesName: 'ヨーギラス',
+    level: 14,
+    nature: 'のんき',
+    medal: 'none',
+    caughtDate: '2026-10-28',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '睡眠EXPボーナス' },
+      { level: 25, skill: 'おてつだいスピードS' },
+      { level: 50, skill: '食材確率アップS' },
+      { level: 70, skill: '最大所持数アップM' },
+      { level: 80, skill: 'スキル確率アップS' },
+    ],
+    ingredients: ['あったかジンジャー', 'ワカクサ大豆', 'マメミート'],
+    specialty: 'ingredient',
+    berry: 'オボンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
