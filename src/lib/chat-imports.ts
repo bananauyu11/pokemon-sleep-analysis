@@ -1225,4 +1225,53 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-10-31 チャットに貼り付けられたカゲボウズ(Lv.13, SP458, ひかえめ)と
+  // カヌチャン(Lv.15, SP457, のうてんき)のスクリーンショットから画像を直接目視して登録。
+  // 出会ったフィールドはどちらもワカクサ本島。食材はカゲボウズがピュアなオイル /
+  // あったかジンジャー / あじわいキノコ、カヌチャンがあんみんトマト / リラックスカカオ /
+  // リラックスカカオ。
+  entry({
+    id: 'chat-import-kageboudu-20261031',
+    speciesId: 'カゲボウズ',
+    speciesName: 'カゲボウズ',
+    level: 13,
+    nature: 'ひかえめ',
+    medal: 'none',
+    caughtDate: '2026-10-31',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいスピードS' },
+      { level: 25, skill: '食材確率アップM' },
+      { level: 50, skill: 'スキル確率アップM' },
+      { level: 70, skill: 'おてつだいスピードM' },
+      { level: 80, skill: '食材確率アップS' },
+    ],
+    ingredients: ['ピュアなオイル', 'あったかジンジャー', 'あじわいキノコ'],
+    specialty: 'berry',
+    berry: 'ブリーのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
+  entry({
+    id: 'chat-import-kanuchan-20261031',
+    speciesId: 'カヌチャン',
+    speciesName: 'カヌチャン',
+    level: 15,
+    nature: 'のうてんき',
+    medal: 'none',
+    caughtDate: '2026-10-31',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキル確率アップM' },
+      { level: 25, skill: '最大所持数アップS' },
+      { level: 50, skill: '食材確率アップM' },
+      { level: 70, skill: 'スキル確率アップS' },
+      { level: 80, skill: 'スキルレベルアップS' },
+    ],
+    ingredients: ['あんみんトマト', 'リラックスカカオ', 'リラックスカカオ'],
+    specialty: 'berry',
+    berry: 'モモンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
