@@ -1274,4 +1274,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-01 チャットに貼り付けられたムウマ(Lv.24, SP738, すなお)の
+  // スクリーンショットから画像を直接目視して登録。出会ったフィールドはワカクサ本島。
+  // 食材はスロット1がほっこりポテト、スロット2・3がめざましコーヒー。
+  entry({
+    id: 'chat-import-muuma-20261101',
+    speciesId: 'ムウマ',
+    speciesName: 'ムウマ',
+    level: 24,
+    nature: 'すなお',
+    medal: 'none',
+    caughtDate: '2026-11-01',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップM' },
+      { level: 25, skill: 'スキル確率アップM' },
+      { level: 50, skill: 'おてつだいスピードS' },
+      { level: 70, skill: 'きのみの数S' },
+      { level: 80, skill: '食材確率アップS' },
+    ],
+    ingredients: ['ほっこりポテト', 'めざましコーヒー', 'めざましコーヒー'],
+    specialty: 'skill',
+    berry: 'ブリーのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
