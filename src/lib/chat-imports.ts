@@ -1299,4 +1299,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-03 チャットに貼り付けられたキャタピー(Lv.15, SP379, うっかりや)の
+  // スクリーンショットから画像を直接目視して登録。SP367の個体とは別個体。
+  // 食材はスロット1・2があまいミツ、スロット3がワカクサ大豆。
+  entry({
+    id: 'chat-import-kyatapii-20261103',
+    speciesId: 'キャタピー',
+    speciesName: 'キャタピー',
+    level: 15,
+    nature: 'うっかりや',
+    medal: 'none',
+    caughtDate: '2026-11-03',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップS' },
+      { level: 25, skill: 'おてつだいボーナス' },
+      { level: 50, skill: '食材確率アップM' },
+      { level: 70, skill: 'おてつだいスピードM' },
+      { level: 80, skill: 'きのみの数S' },
+    ],
+    ingredients: ['あまいミツ', 'あまいミツ', 'ワカクサ大豆'],
+    specialty: 'berry',
+    berry: 'ラムのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
