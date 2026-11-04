@@ -1350,4 +1350,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-05 チャットに貼り付けられたコリンク(Lv.14, SP427, おくびょう)の
+  // スクリーンショットから画像を直接目視して登録。SP397・SP407・SP419の個体とは別個体。
+  // 出会ったフィールドはゴールド旧発電所。食材はスロット1があんみんトマト、
+  // スロット2がピュアなオイル、スロット3がめざましコーヒー。
+  entry({
+    id: 'chat-import-korinku-20261105',
+    speciesId: 'コリンク',
+    speciesName: 'コリンク',
+    level: 14,
+    nature: 'おくびょう',
+    medal: 'none',
+    caughtDate: '2026-11-05',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'げんき回復ボーナス' },
+      { level: 25, skill: 'おてつだいスピードS' },
+      { level: 50, skill: 'おてつだいスピードM' },
+      { level: 70, skill: 'おてつだいボーナス' },
+      { level: 80, skill: 'ゆめのかけらボーナス' },
+    ],
+    ingredients: ['あんみんトマト', 'ピュアなオイル', 'めざましコーヒー'],
+    specialty: 'ingredient',
+    berry: 'ウブのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
