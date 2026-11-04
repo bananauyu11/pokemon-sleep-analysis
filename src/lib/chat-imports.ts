@@ -1324,4 +1324,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-05 チャットに貼り付けられたデデンネ(Lv.21, SP808, しんちょう)の
+  // スクリーンショットから画像を直接目視して登録。SP747の個体とは別個体。
+  // 出会ったフィールドはゴールド旧発電所。食材はスロット1・2がとくせんリンゴ、
+  // スロット3がリラックスカカオ。
+  entry({
+    id: 'chat-import-dedenne-20261105',
+    speciesId: 'デデンネ',
+    speciesName: 'デデンネ',
+    level: 21,
+    nature: 'しんちょう',
+    medal: 'none',
+    caughtDate: '2026-11-05',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップS' },
+      { level: 25, skill: 'スキル確率アップM' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: '最大所持数アップL' },
+      { level: 80, skill: 'おてつだいスピードS' },
+    ],
+    ingredients: ['とくせんリンゴ', 'とくせんリンゴ', 'リラックスカカオ'],
+    specialty: 'skill',
+    berry: 'ウブのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
