@@ -1376,4 +1376,53 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-06 チャットに貼り付けられたコリンク(Lv.15, SP446, すなお)と
+  // ルクシオ(Lv.21, SP637, いじっぱり)のスクリーンショットから画像を直接目視して登録。
+  // コリンクはこれまでの個体とは別個体。出会ったフィールドはどちらもゴールド旧発電所。
+  // 食材はコリンクがあんみんトマト / ピュアなオイル / ピュアなオイル、
+  // ルクシオがあんみんトマト / あんみんトマト / ピュアなオイル。
+  entry({
+    id: 'chat-import-korinku-20261106',
+    speciesId: 'コリンク',
+    speciesName: 'コリンク',
+    level: 15,
+    nature: 'すなお',
+    medal: 'none',
+    caughtDate: '2026-11-06',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキルレベルアップM' },
+      { level: 25, skill: 'おてつだいスピードS' },
+      { level: 50, skill: '食材確率アップM' },
+      { level: 70, skill: 'スキルレベルアップS' },
+      { level: 80, skill: '最大所持数アップS' },
+    ],
+    ingredients: ['あんみんトマト', 'ピュアなオイル', 'ピュアなオイル'],
+    specialty: 'ingredient',
+    berry: 'ウブのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
+  entry({
+    id: 'chat-import-rukushio-20261106',
+    speciesId: 'ルクシオ',
+    speciesName: 'ルクシオ',
+    level: 21,
+    nature: 'いじっぱり',
+    medal: 'none',
+    caughtDate: '2026-11-06',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいスピードS' },
+      { level: 25, skill: '最大所持数アップL' },
+      { level: 50, skill: '最大所持数アップS' },
+      { level: 70, skill: 'スキルレベルアップS' },
+      { level: 80, skill: 'スキル確率アップS' },
+    ],
+    ingredients: ['あんみんトマト', 'あんみんトマト', 'ピュアなオイル'],
+    specialty: 'ingredient',
+    berry: 'ウブのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
