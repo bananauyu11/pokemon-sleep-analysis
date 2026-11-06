@@ -1425,4 +1425,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-07 チャットに貼り付けられたアゴジムシ(Lv.14, SP402, まじめ)の
+  // スクリーンショットから画像を直接目視して登録。SP492の個体とは別個体。
+  // 出会ったフィールドはゴールド旧発電所。食材はスロット1がめざましコーヒー、
+  // スロット2があじわいキノコ、スロット3があまいミツ。
+  entry({
+    id: 'chat-import-agojimushi-20261107',
+    speciesId: 'アゴジムシ',
+    speciesName: 'アゴジムシ',
+    level: 14,
+    nature: 'まじめ',
+    medal: 'none',
+    caughtDate: '2026-11-07',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップS' },
+      { level: 25, skill: '最大所持数アップL' },
+      { level: 50, skill: 'スキル確率アップM' },
+      { level: 70, skill: 'おてつだいスピードS' },
+      { level: 80, skill: '最大所持数アップM' },
+    ],
+    ingredients: ['めざましコーヒー', 'あじわいキノコ', 'あまいミツ'],
+    specialty: 'ingredient',
+    berry: 'ラムのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
