@@ -1503,4 +1503,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-11 チャットに貼り付けられたサナギラス(Lv.19, SP652, おだやか)の
+  // スクリーンショットから画像を直接目視して登録。出会ったフィールドはトープ洞窟。
+  // 食材はスロット1があったかジンジャー、スロット2・3がワカクサ大豆。
+  entry({
+    id: 'chat-import-sanagirasu-20261111',
+    speciesId: 'サナギラス',
+    speciesName: 'サナギラス',
+    level: 19,
+    nature: 'おだやか',
+    medal: 'none',
+    caughtDate: '2026-11-11',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップM' },
+      { level: 25, skill: '食材確率アップS' },
+      { level: 50, skill: 'スキルレベルアップS' },
+      { level: 70, skill: 'おてつだいスピードM' },
+      { level: 80, skill: 'スキル確率アップM' },
+    ],
+    ingredients: ['あったかジンジャー', 'ワカクサ大豆', 'ワカクサ大豆'],
+    specialty: 'ingredient',
+    berry: 'オボンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
