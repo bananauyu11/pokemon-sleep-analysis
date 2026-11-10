@@ -1477,4 +1477,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-10 チャットに貼り付けられたナックラー(Lv.13, SP442, れいせい)の
+  // スクリーンショットから画像を直接目視して登録。これまでのナックラーとは別個体。
+  // 出会ったフィールドはトープ洞窟。食材はスロット1がつやつやアボカド、
+  // スロット2・3がげきからハーブ。
+  entry({
+    id: 'chat-import-nakkuraa-20261110',
+    speciesId: 'ナックラー',
+    speciesName: 'ナックラー',
+    level: 13,
+    nature: 'れいせい',
+    medal: 'none',
+    caughtDate: '2026-11-10',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキルレベルアップM' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: '最大所持数アップS' },
+      { level: 70, skill: 'おてつだいスピードM' },
+      { level: 80, skill: '最大所持数アップL' },
+    ],
+    ingredients: ['つやつやアボカド', 'げきからハーブ', 'げきからハーブ'],
+    specialty: 'ingredient',
+    berry: 'フィラのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
