@@ -1528,4 +1528,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-12 チャットに貼り付けられたナックラー(Lv.15, SP424, せっかち)の
+  // スクリーンショットから画像を直接目視して登録。これまでのナックラーとは別個体。
+  // 食材はスロット1・3がつやつやアボカド、スロット2がげきからハーブ。
+  entry({
+    id: 'chat-import-nakkuraa-20261112',
+    speciesId: 'ナックラー',
+    speciesName: 'ナックラー',
+    level: 15,
+    nature: 'せっかち',
+    medal: 'none',
+    caughtDate: '2026-11-12',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいボーナス' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: 'スキル確率アップM' },
+      { level: 70, skill: 'ゆめのかけらボーナス' },
+      { level: 80, skill: '最大所持数アップL' },
+    ],
+    ingredients: ['つやつやアボカド', 'げきからハーブ', 'つやつやアボカド'],
+    specialty: 'ingredient',
+    berry: 'フィラのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
