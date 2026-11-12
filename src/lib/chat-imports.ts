@@ -1553,4 +1553,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-13 チャットに貼り付けられたヨーギラス(Lv.14, SP493, きまぐれ)の
+  // スクリーンショットから画像を直接目視して登録。これまでのヨーギラスとは別個体。
+  // 出会ったフィールドはトープ洞窟。食材はスロット1・2があったかジンジャー、
+  // スロット3がワカクサ大豆。
+  entry({
+    id: 'chat-import-yoogirasu-20261113',
+    speciesId: 'ヨーギラス',
+    speciesName: 'ヨーギラス',
+    level: 14,
+    nature: 'きまぐれ',
+    medal: 'none',
+    caughtDate: '2026-11-13',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいボーナス' },
+      { level: 25, skill: 'げんき回復ボーナス' },
+      { level: 50, skill: '最大所持数アップS' },
+      { level: 70, skill: 'おてつだいスピードM' },
+      { level: 80, skill: '食材確率アップS' },
+    ],
+    ingredients: ['あったかジンジャー', 'あったかジンジャー', 'ワカクサ大豆'],
+    specialty: 'ingredient',
+    berry: 'オボンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
