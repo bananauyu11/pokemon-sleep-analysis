@@ -1579,4 +1579,53 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-14 チャットに貼り付けられたヒコザル(Lv.15, SP541, きまぐれ)と
+  // ナックラー(Lv.15, SP462, きまぐれ)のスクリーンショットから画像を直接目視して登録。
+  // 出会ったフィールドはどちらもトープ洞窟。ナックラーはこれまでの個体とは別個体。
+  // 食材はヒコザルが3スロットともげきからハーブ、ナックラーがつやつやアボカド /
+  // つやつやアボカド / ワカクサ大豆。
+  entry({
+    id: 'chat-import-hikozaru-20261114',
+    speciesId: 'ヒコザル',
+    speciesName: 'ヒコザル',
+    level: 15,
+    nature: 'きまぐれ',
+    medal: 'none',
+    caughtDate: '2026-11-14',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '睡眠EXPボーナス' },
+      { level: 25, skill: '最大所持数アップS' },
+      { level: 50, skill: '最大所持数アップM' },
+      { level: 70, skill: 'リサーチEXPボーナス' },
+      { level: 80, skill: 'スキル確率アップS' },
+    ],
+    ingredients: ['げきからハーブ', 'げきからハーブ', 'げきからハーブ'],
+    specialty: 'skill',
+    berry: 'ヒメリのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
+  entry({
+    id: 'chat-import-nakkuraa-20261114',
+    speciesId: 'ナックラー',
+    speciesName: 'ナックラー',
+    level: 15,
+    nature: 'きまぐれ',
+    medal: 'none',
+    caughtDate: '2026-11-14',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'ゆめのかけらボーナス' },
+      { level: 25, skill: '最大所持数アップS' },
+      { level: 50, skill: '最大所持数アップL' },
+      { level: 70, skill: 'スキルレベルアップM' },
+      { level: 80, skill: 'スキル確率アップS' },
+    ],
+    ingredients: ['つやつやアボカド', 'つやつやアボカド', 'ワカクサ大豆'],
+    specialty: 'ingredient',
+    berry: 'フィラのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
