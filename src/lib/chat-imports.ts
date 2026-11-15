@@ -1628,4 +1628,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-15 チャットに貼り付けられたナックラー(Lv.14, SP450, まじめ)の
+  // スクリーンショットから画像を直接目視して登録。これまでのナックラーとは別個体。
+  // 出会ったフィールドはトープ洞窟。食材はスロット1・2がつやつやアボカド、
+  // スロット3がワカクサ大豆。
+  entry({
+    id: 'chat-import-nakkuraa-20261115',
+    speciesId: 'ナックラー',
+    speciesName: 'ナックラー',
+    level: 14,
+    nature: 'まじめ',
+    medal: 'none',
+    caughtDate: '2026-11-15',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'ゆめのかけらボーナス' },
+      { level: 25, skill: '食材確率アップS' },
+      { level: 50, skill: 'げんき回復ボーナス' },
+      { level: 70, skill: 'スキル確率アップS' },
+      { level: 80, skill: '最大所持数アップL' },
+    ],
+    ingredients: ['つやつやアボカド', 'つやつやアボカド', 'ワカクサ大豆'],
+    specialty: 'ingredient',
+    berry: 'フィラのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
