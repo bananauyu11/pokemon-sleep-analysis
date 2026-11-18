@@ -1654,4 +1654,52 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-17/18 チャットに貼り付けられたモンメン(Lv.15, SP426, むじゃき)と
+  // キモリ(Lv.15, SP559, わんぱく)のスクリーンショットから画像を直接目視して登録。
+  // 出会ったフィールドはどちらもシアンの砂浜。食材はモンメンが3スロットとも
+  // ひとくちナッツ、キモリがとくせんエッグ / とくせんエッグ / めざましコーヒー。
+  entry({
+    id: 'chat-import-monmen-20261117',
+    speciesId: 'モンメン',
+    speciesName: 'モンメン',
+    level: 15,
+    nature: 'むじゃき',
+    medal: 'none',
+    caughtDate: '2026-11-17',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップM' },
+      { level: 25, skill: 'リサーチEXPボーナス' },
+      { level: 50, skill: '最大所持数アップS' },
+      { level: 70, skill: '食材確率アップS' },
+      { level: 80, skill: '最大所持数アップM' },
+    ],
+    ingredients: ['ひとくちナッツ', 'ひとくちナッツ', 'ひとくちナッツ'],
+    specialty: 'ingredient',
+    berry: 'モモンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
+  entry({
+    id: 'chat-import-kimori-20261118',
+    speciesId: 'キモリ',
+    speciesName: 'キモリ',
+    level: 15,
+    nature: 'わんぱく',
+    medal: 'none',
+    caughtDate: '2026-11-18',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'リサーチEXPボーナス' },
+      { level: 25, skill: '食材確率アップM' },
+      { level: 50, skill: '最大所持数アップS' },
+      { level: 70, skill: 'スキル確率アップS' },
+      { level: 80, skill: '食材確率アップS' },
+    ],
+    ingredients: ['とくせんエッグ', 'とくせんエッグ', 'めざましコーヒー'],
+    specialty: 'skill',
+    berry: 'ドリのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];

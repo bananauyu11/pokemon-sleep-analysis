@@ -29,6 +29,8 @@ export const INGREDIENT_ICONS: IngredientIcon[] = [
   { id: 'coffee', name: 'めざましコーヒー' },
   { id: 'pumpkin', name: 'ずっしりカボチャ' },
   { id: 'avocado', name: 'つやつやアボカド' },
+  // 2026-11-15 追加の新食材。アイコンはユーザーのモンメンのスクリーンショットから切り出し。
+  { id: 'nuts', name: 'ひとくちナッツ' },
 ];
 
 export function ingredientIconUrl(id: string): string {
