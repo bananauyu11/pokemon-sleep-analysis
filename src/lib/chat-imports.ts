@@ -1702,4 +1702,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-19 チャットに貼り付けられたホゲータ(Lv.13, SP499, のんき)の
+  // スクリーンショットから画像を直接目視して登録。出会ったフィールドはシアンの砂浜。
+  // 食材はスロット1がとくせんリンゴ、スロット2がマメミート、スロット3がげきからハーブ。
+  entry({
+    id: 'chat-import-hogeeta-20261119',
+    speciesId: 'ホゲータ',
+    speciesName: 'ホゲータ',
+    level: 13,
+    nature: 'のんき',
+    medal: 'none',
+    caughtDate: '2026-11-19',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップS' },
+      { level: 25, skill: '最大所持数アップM' },
+      { level: 50, skill: 'おてつだいスピードS' },
+      { level: 70, skill: '最大所持数アップS' },
+      { level: 80, skill: 'リサーチEXPボーナス' },
+    ],
+    ingredients: ['とくせんリンゴ', 'マメミート', 'げきからハーブ'],
+    specialty: 'ingredient',
+    berry: 'ヒメリのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
