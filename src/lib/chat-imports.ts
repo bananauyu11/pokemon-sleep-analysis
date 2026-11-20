@@ -1727,4 +1727,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-21 チャットに貼り付けられたゴクリン(Lv.14, SP434, れいせい)の
+  // スクリーンショットから画像を直接目視して登録。出会ったフィールドはシアンの砂浜。
+  // 食材はスロット1がワカクサ大豆、スロット2があじわいキノコ、スロット3があまいミツ。
+  entry({
+    id: 'chat-import-gokurin-20261121',
+    speciesId: 'ゴクリン',
+    speciesName: 'ゴクリン',
+    level: 14,
+    nature: 'れいせい',
+    medal: 'none',
+    caughtDate: '2026-11-21',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキルレベルアップS' },
+      { level: 25, skill: 'おてつだいスピードS' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: '食材確率アップM' },
+      { level: 80, skill: '食材確率アップS' },
+    ],
+    ingredients: ['ワカクサ大豆', 'あじわいキノコ', 'あまいミツ'],
+    specialty: 'skill',
+    berry: 'カゴのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
