@@ -1752,4 +1752,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-22 チャットに貼り付けられたワニノコ(Lv.14, SP504, おくびょう)の
+  // スクリーンショットから画像を直接目視して登録。出会ったフィールドはシアンの砂浜。
+  // 食材はスロット1・2がマメミート、スロット3がピュアなオイル。
+  entry({
+    id: 'chat-import-waninoko-20261122',
+    speciesId: 'ワニノコ',
+    speciesName: 'ワニノコ',
+    level: 14,
+    nature: 'おくびょう',
+    medal: 'none',
+    caughtDate: '2026-11-22',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'おてつだいスピードM' },
+      { level: 25, skill: 'おてつだいスピードS' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: '最大所持数アップS' },
+      { level: 80, skill: 'げんき回復ボーナス' },
+    ],
+    ingredients: ['マメミート', 'マメミート', 'ピュアなオイル'],
+    specialty: 'berry',
+    berry: 'オレンのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
