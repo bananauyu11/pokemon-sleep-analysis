@@ -1777,4 +1777,29 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-23 チャットに貼り付けられたゴクリン(Lv.14, SP341, むじゃき)の
+  // スクリーンショットから画像を直接目視して登録。SP434の個体とは別個体。
+  // 出会ったフィールドはシアンの砂浜。食材は3スロットともワカクサ大豆。
+  entry({
+    id: 'chat-import-gokurin-20261123',
+    speciesId: 'ゴクリン',
+    speciesName: 'ゴクリン',
+    level: 14,
+    nature: 'むじゃき',
+    medal: 'none',
+    caughtDate: '2026-11-23',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '最大所持数アップS' },
+      { level: 25, skill: 'スキル確率アップS' },
+      { level: 50, skill: '食材確率アップS' },
+      { level: 70, skill: 'スキルレベルアップS' },
+      { level: 80, skill: '最大所持数アップM' },
+    ],
+    ingredients: ['ワカクサ大豆', 'ワカクサ大豆', 'ワカクサ大豆'],
+    specialty: 'skill',
+    berry: 'カゴのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
