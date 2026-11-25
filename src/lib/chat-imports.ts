@@ -1852,4 +1852,30 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-24 チャットに貼り付けられたカゲボウズ(Lv.14, がんばりや)の
+  // スクリーンショットから画像を直接目視して登録。SPは通知に隠れて読めず。
+  // SP458の個体とは別個体。出会ったフィールドはゴールド旧発電所。
+  // 食材はスロット1・2がピュアなオイル、スロット3があったかジンジャー。
+  entry({
+    id: 'chat-import-kageboudu-20261124',
+    speciesId: 'カゲボウズ',
+    speciesName: 'カゲボウズ',
+    level: 14,
+    nature: 'がんばりや',
+    medal: 'none',
+    caughtDate: '2026-11-24',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキルレベルアップS' },
+      { level: 25, skill: 'スキル確率アップM' },
+      { level: 50, skill: '最大所持数アップS' },
+      { level: 70, skill: '食材確率アップM' },
+      { level: 80, skill: '最大所持数アップM' },
+    ],
+    ingredients: ['ピュアなオイル', 'ピュアなオイル', 'あったかジンジャー'],
+    specialty: 'berry',
+    berry: 'ブリーのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
