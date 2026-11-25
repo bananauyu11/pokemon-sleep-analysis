@@ -1802,4 +1802,54 @@ export const CHAT_IMPORTED_ENTRIES: PokemonEntry[] = [
     adopted: false,
     imageFileName: '',
   }),
+  // 2026-11-24/25 チャットに貼り付けられたアゴジムシ(Lv.14, SP393, さみしがり)と
+  // ココドラ(Lv.13, SP412, やんちゃ)のスクリーンショットから画像を直接目視して登録。
+  // アゴジムシはこれまでの個体とは別個体で、出会ったフィールドはゴールド旧発電所。
+  // 食材はアゴジムシが3スロットともめざましコーヒー(アイコンは上部が見切れているが
+  // 個数x2/x5/x7が同構成の既存個体と一致)、ココドラがマメミート / マメミート /
+  // めざましコーヒー。
+  entry({
+    id: 'chat-import-agojimushi-20261124',
+    speciesId: 'アゴジムシ',
+    speciesName: 'アゴジムシ',
+    level: 14,
+    nature: 'さみしがり',
+    medal: 'none',
+    caughtDate: '2026-11-24',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: 'スキル確率アップS' },
+      { level: 25, skill: '食材確率アップS' },
+      { level: 50, skill: 'おてつだいスピードS' },
+      { level: 70, skill: 'スキル確率アップM' },
+      { level: 80, skill: '最大所持数アップM' },
+    ],
+    ingredients: ['めざましコーヒー', 'めざましコーヒー', 'めざましコーヒー'],
+    specialty: 'ingredient',
+    berry: 'ラムのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
+  entry({
+    id: 'chat-import-kokodora-20261125',
+    speciesId: 'ココドラ',
+    speciesName: 'ココドラ',
+    level: 13,
+    nature: 'やんちゃ',
+    medal: 'none',
+    caughtDate: '2026-11-25',
+    capturedTime: '',
+    subSkills: [
+      { level: 10, skill: '食材確率アップS' },
+      { level: 25, skill: '最大所持数アップL' },
+      { level: 50, skill: 'スキル確率アップS' },
+      { level: 70, skill: 'スキルレベルアップS' },
+      { level: 80, skill: '最大所持数アップM' },
+    ],
+    ingredients: ['マメミート', 'マメミート', 'めざましコーヒー'],
+    specialty: 'ingredient',
+    berry: 'ベリブのみ',
+    adopted: false,
+    imageFileName: '',
+  }),
 ];
